@@ -1,5 +1,6 @@
 /*
 Copyright 2012 Jun Wako <wakojun@gmail.com>
+Copyright 2013 Oleg Kostyuk <cub.uanic@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,28 +16,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Copy and worked on with love from the EZ team
+
 #pragma once
 
-#define AUDIO_VOICES
-#define AUDIO_PIN C6
+#define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 
-/* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
-/* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
+#undef DEBOUNCE
+#define DEBOUNCE 25
 
-/*
- * Feature disable options
- *  These options are also useful to firmware size reduction.
- */
+#define COMBO_ALLOW_ACTION_KEYS
+#define COMBO_VARIABLE_LEN
 
-/* disable debug print */
-// #define NO_DEBUG
-
-/* disable print */
-// #define NO_PRINT
-
-/* disable action features */
-//#define NO_ACTION_LAYER
-//#define NO_ACTION_TAPPING
-//#define NO_ACTION_ONESHOT
+#define TAPPING_TERM_PER_KEY
