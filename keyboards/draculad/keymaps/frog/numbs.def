@@ -1,6 +1,0 @@
-COMB(three,     KC_3,   KC_1, KC_2)
-COMB(five,      KC_5,   KC_1, KC_4)
-COMB(six,       KC_6,   KC_2, KC_4)
-COMB(seven,     KC_7,   KC_1, KC_2, KC_4)
-COMB(nine,      KC_9,   KC_1, KC_8)
-COMB(zero,      KC_0,   KC_2, KC_8)
