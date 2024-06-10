@@ -17,7 +17,7 @@ enum layers {
   _ADJUST,
   _MOUSE,
   _GAME,
-  _JOYSTICK
+  _GAMEPAD
 };
 
 enum keycodes {
@@ -56,7 +56,8 @@ enum keycodes {
 #define SYM       MO(_SYMBOLS)
 #define NUMPADD   MO(_NUM)
 #define MOUSERR   TO(_MOUSE)
-#define GAMEPAD   TO(_GAME)
+#define GAMERRR   TO(_GAME)
+#define GAMEPAD   TO(_GAMEPAD)
 
 uint8_t currButton = 0;
 uint8_t prevButton = 0;
@@ -194,10 +195,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BLLSPD2:
       if (record->event.pressed){
         bllSpd = 16;
-        register_code(KC_ACL3);
+        register_code(KC_ACL2);
       } else {
         bllSpd = 3;
-        unregister_code(KC_ACL3);
+        unregister_code(KC_ACL2);
       }
       return false;
       break;
@@ -434,7 +435,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_ALTER] = LAYOUT_split_3x5_3(
     KC_TAB,   XXXXXXX,  KC_UP,    XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
-    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  GAMEPAD,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
+    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  GAMERRR,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
     KC_LSFT,  XXXXXXX,  KC_LGUI,  MOUSERR,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
                                   XXXXXXX,  XXXXXXX,  _______,  SYM,      KC_MPLY,  _______
   ),
@@ -452,8 +453,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
-    KC_LCTL,  KC_CAPS,  _______,  _______,  GAMEPAD,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  MOUSERR,  _______,  _______,  KC_BTN2,
+    KC_LCTL,  _______,  _______,  _______,  GAMERRR,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  GAMEPAD,                      KC_WH_D,  MOUSERR,  _______,  _______,  KC_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_MOUSE] = LAYOUT_split_3x5_3(
@@ -467,6 +468,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_A, KC_S, KC_D, KC_F, KC_G,                        KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
     KC_ESC, KC_X, KC_C, KC_V, KC_B,                     KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
                    KC_LSFT, KC_BSPC, KC_LALT,   KC_LGUI, KC_SPC, BASE 
+  ),
+  [_GAMEPAD] = LAYOUT_split_3x5_3(
+    KC_TAB,   KC_Q, KC_W, KC_E, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
+    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_G,    
+    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
+                          KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
   )
   // clang-format on
 };
