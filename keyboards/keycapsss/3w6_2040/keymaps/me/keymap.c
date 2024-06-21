@@ -86,7 +86,10 @@ uint8_t mouseSOCD = 0;
 void keyboard_post_init_user(void){
   combo_disable();
   set_single_persistent_default_layer(_BASE);
-  pimoroni_trackball_set_rgbw(40,40,40,40);
+  pimoroni_trackball_set_rgbw(40,20,40,40);
+  // while (!host_keyboard_led_state().num_lock){
+  //   tap_code(KC_NUM);
+  // }
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -95,10 +98,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
   highest_layer = get_highest_layer(state);
 
-  if (state & _GAME){
-    pimoroni_trackball_set_rgbw(40,40,40,40);
+  if (state >= _GAME){
+    pimoroni_trackball_set_rgbw(60,60,60,60);
   } else {
-    pimoroni_trackball_set_rgbw(30,20,40,10);
+    pimoroni_trackball_set_rgbw(40,20,40,40);
   }
 
   if (highest_layer == _ALTER){
@@ -458,20 +461,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_MOUSE] = LAYOUT_split_3x5_3(
-    KC_BTN3,  KC_WH_L,  SOCD_MU,  KC_WH_R,  BASE,                         BASE,     KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
-    KC_BTN1,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_WH_U,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_BTN2,  _______,  _______,  BASE,     KC_WH_D,                      KC_WH_D,  BASE,     _______,  _______,  KC_BTN2,
-                                  BLLSPD0,  BLLSPD1,  BLLSPD2,  _______,  _______,  XXXXXXX
+    KC_TAB,   KC_Q, KC_W, KC_E, KC_R,                      BASE,     KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
+    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
+    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,                      KC_WH_D,  BASE,     _______,  _______,  KC_BTN2,
+                                  KC_Q, KC_LSFT, KC_E,  BLLSPD0,  BLLSPD1,  XXXXXXX
   ),
   [_GAME] = LAYOUT_split_3x5_3(
     KC_TAB, KC_W, KC_E, KC_R, KC_T,                        KC_Y, KC_U, KC_I,    KC_O,   KC_P,
     KC_A, KC_S, KC_D, KC_F, KC_G,                        KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
     KC_ESC, KC_X, KC_C, KC_V, KC_B,                     KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
-                   KC_LSFT, KC_BSPC, KC_LALT,   KC_LGUI, KC_SPC, BASE 
+                   KC_LSFT, KC_BSPC, KC_LALT,   KC_ENT, KC_SPC, BASE 
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q, KC_W, KC_E, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
-    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_G,    
+    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
     KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
                           KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
   )
