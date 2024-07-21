@@ -9,15 +9,18 @@
   #include "print.h"
 #endif
 
+void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo);
+
 enum layers {
   _BASE = 0,
+  _HOLLOW,
   _ALTER,
   _SYMBOLS,
   _NUM,
   _ADJUST,
+  _GAMEPAD,
   _MOUSE,
-  _GAME,
-  _GAMEPAD
+  _MINECRAFT
 };
 
 enum keycodes {
@@ -25,11 +28,24 @@ enum keycodes {
   BLLSPD1,
   BLLSPD2,
 
-  // socd cleaning
+  //  gamer mouse
+  GAMERMS,
+
+  //  socd cleaning
   SOCD_ML,
   SOCD_MR,
   SOCD_MU,
   SOCD_MD,
+
+  HK_L,
+  HK_R,
+  HK_U,
+  HK_D,
+
+  LEFT,
+  RGHT,
+  UPUP,
+  DOWN,
 
   //  scrollArrowToggle
   toggle
@@ -56,7 +72,7 @@ enum keycodes {
 #define SYM       MO(_SYMBOLS)
 #define NUMPADD   MO(_NUM)
 #define MOUSERR   TO(_MOUSE)
-#define GAMERRR   TO(_GAME)
+#define HKGAMER   TO(_HOLLOW)
 #define GAMEPAD   TO(_GAMEPAD)
 
 uint8_t currButton = 0;
@@ -82,14 +98,12 @@ uint8_t highest_layer = _BASE;
 
 uint8_t bllSpd = 1;
 uint8_t mouseSOCD = 0;
+uint8_t gameSOCD = 0;
 
 void keyboard_post_init_user(void){
   combo_disable();
   set_single_persistent_default_layer(_BASE);
   pimoroni_trackball_set_rgbw(40,20,40,40);
-  // while (!host_keyboard_led_state().num_lock){
-  //   tap_code(KC_NUM);
-  // }
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -97,12 +111,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   state = update_tri_layer_state(state, _SYMBOLS, _NUM, _ADJUST);
 
   highest_layer = get_highest_layer(state);
-
-  if (state >= _GAME){
-    pimoroni_trackball_set_rgbw(60,60,60,60);
-  } else {
-    pimoroni_trackball_set_rgbw(40,20,40,40);
-  }
 
   if (highest_layer == _ALTER){
     register_mods(MOD_LALT);  
@@ -117,60 +125,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   }
 
   return state;
-}
-
-void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
-
-  if (on){
-    *totalState |= bit;
-  } else {
-    *totalState &= ~bit;
-  }
-
-  bool highNibble = bit >> 4;
-
-  uint8_t state = (0x03 << (highNibble * 4)) & *totalState;
-  uint8_t start = (0x0C << (highNibble * 4)) & *totalState;
-
-  state >>= (highNibble * 4);
-  start >>= (highNibble * 4);
-
-  if (state < 3){
-    switch (state){
-      case 1:
-        register_code(keyOne);
-        unregister_code(keyTwo);
-        break;
-      case 2:
-        unregister_code(keyOne);
-        register_code(keyTwo);
-        break;
-      default:
-        unregister_code(keyOne);
-        unregister_code(keyTwo);
-        break;
-    }
-
-    *totalState &= ~(0x0C << (highNibble * 4));
-    *totalState |= ((state * 4) << (highNibble * 4));
-    return;
-  }
-
-  switch (start) {
-    case 4:
-      unregister_code(keyOne);
-      register_code(keyTwo);
-      break;
-    case 8:
-      register_code(keyOne);
-      unregister_code(keyTwo);
-      break;
-    default:
-      unregister_code(keyOne);
-      unregister_code(keyTwo);
-      break;
-  }
-
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -205,6 +159,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
+    case GAMERMS:
+      if (record->event.pressed){
+        layer_on(_GAMEPAD);
+        layer_on(_MOUSE);
+      }
+      return false;
+      break;
     case SOCD_ML:
       socdCleaner(&mouseSOCD, 0x01, record->event.pressed, KC_MS_L, KC_MS_R);
       return false;
@@ -221,6 +182,38 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       socdCleaner(&mouseSOCD, 0x20, record->event.pressed, KC_MS_U, KC_MS_D);
       return false;
       break;
+    case HK_L:
+      socdCleaner(&gameSOCD, 0x01, record->event.pressed, KC_S, KC_F);
+      return false;
+      break;
+    case HK_R:
+      socdCleaner(&gameSOCD, 0x02, record->event.pressed, KC_S, KC_F);
+      return false;
+      break;
+    case HK_U:
+      socdCleaner(&gameSOCD, 0x10, record->event.pressed, KC_E, KC_D);
+      return false;
+      break;
+    case HK_D:
+      socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_E, KC_D);
+      return false;
+      break;
+    case LEFT:
+      socdCleaner(&gameSOCD, 0x01, record->event.pressed, KC_A, KC_D);
+      return false;
+      break;
+    case RGHT:
+      socdCleaner(&gameSOCD, 0x02, record->event.pressed, KC_A, KC_D);
+      return false;
+      break;
+    case UPUP:
+      socdCleaner(&gameSOCD, 0x10, record->event.pressed, KC_W, KC_S);
+      return false;
+      break;
+    case DOWN:
+      socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_W, KC_S);
+      return false;
+      break;
     case toggle:
       if (record->event.pressed){
         scrollOrArrow = ! scrollOrArrow;
@@ -234,18 +227,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-// bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-//   switch (keycode) {
-//     case shftZ:
-//       // Immediately select the hold action when another key is pressed.
-//       return true;
-//     case shftSls:
-//       return true;
-//     default:
-//       // Do not select the hold action when another key is pressed.
-//       return false;
-//   }
-// }
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case shftZ:
+      // Immediately select the hold action when another key is pressed.
+      return true;
+    case shftSls:
+      return true;
+    default:
+      // Do not select the hold action when another key is pressed.
+      return false;
+  }
+}
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
@@ -292,103 +285,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
   //  direction handling
 
   switch (highest_layer){
-    case _GAME:
-      /*
-      if (mouse_report.x | mouse_report.y){
-        if (!xCount){
-          xCount = 50;
-        }
-        xSum += mouse_report.x;
-        ySum += mouse_report.y;
-      }
-
-      if(moreShit){
-        moreShit--;
-        if(!moreShit){
-          unregister_code(KC_LEFT);
-          unregister_code(KC_UP);
-          unregister_code(KC_RIGHT);
-          unregister_code(KC_DOWN);
-        }
-      }
-
-      if(xCount){
-        xCount--;
-        if(!xCount){
-
-          vec = xSum * xSum + ySum * ySum;
-
-          uprintf("%i",vec);
-          
-          if (vec > (pimoroniThreshold * pimoroniThreshold)){
-            moreShit = xSum & 0x80;
-            moreShit >>= 1;
-            moreShit |= ySum & 0x80;
-            moreShit >>= 1;
-            moreShit |= xSum ^ 0x80;
-            moreShit >>= 1;
-            moreShit |= ySum ^ 0x80;
-            xSum = 0;
-            ySum = 0;
-            switch(moreShit){
-              case 1:
-                unregister_code(KC_LEFT);
-                unregister_code(KC_UP);
-                unregister_code(KC_RIGHT);
-                register_code(KC_DOWN);
-                break;
-              case 2:
-                unregister_code(KC_LEFT);
-                unregister_code(KC_UP);
-                register_code(KC_RIGHT);
-                unregister_code(KC_DOWN);
-                break;
-              case 3:
-                unregister_code(KC_LEFT);
-                unregister_code(KC_UP);
-                register_code(KC_RIGHT);
-                register_code(KC_DOWN);
-                break;
-              case 4:
-                unregister_code(KC_LEFT);
-                register_code(KC_UP);
-                unregister_code(KC_RIGHT);
-                unregister_code(KC_DOWN);
-                break;
-              case 6:
-                unregister_code(KC_LEFT);
-                register_code(KC_UP);
-                register_code(KC_RIGHT);
-                unregister_code(KC_DOWN);
-                break;
-              case 8:
-                register_code(KC_LEFT);
-                unregister_code(KC_UP);
-                unregister_code(KC_RIGHT);
-                unregister_code(KC_DOWN);
-                break;
-              case 9:
-                register_code(KC_LEFT);
-                unregister_code(KC_UP);
-                unregister_code(KC_RIGHT);
-                register_code(KC_DOWN);
-                break;
-              case 12:
-                register_code(KC_LEFT);
-                register_code(KC_UP);
-                unregister_code(KC_RIGHT);
-                unregister_code(KC_DOWN);
-                break;
-              default:
-                break;
-            }
-            moreShit = 150;
-          }
-
-          
-        }
-      }
-      */
+    case _GAMEPAD:
+      
       
 
       break; 
@@ -436,10 +334,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     shftZ,    KC_X,     lGuiC,    lAltV,    KC_B,                         KC_N,     rAltM,    guiComm,  KC_DOT,   shftSls,
                                   NUMPADD,  KC_BSPC,  quotAlt,  entSymb,  spcSymb,  toggle 
   ),
+  [_HOLLOW] = LAYOUT_split_3x5_3(
+    KC_TAB, KC_W, HK_U, KC_R, KC_T,                    KC_Y, KC_U, KC_I,    KC_O,   KC_P,
+    KC_A,   HK_L, HK_D, HK_R, KC_G,                    KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
+    KC_ESC, KC_X, KC_C, KC_V, KC_B,                    KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
+                     NUMPADD, KC_G, KC_LALT,   KC_ENT, KC_SPC, BASE
+  ),
   [_ALTER] = LAYOUT_split_3x5_3(
     KC_TAB,   XXXXXXX,  KC_UP,    XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
-    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  GAMERRR,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
-    KC_LSFT,  XXXXXXX,  KC_LGUI,  MOUSERR,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
+    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  XXXXXXX,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
+    KC_LSFT,  XXXXXXX,  KC_LGUI,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
                                   XXXXXXX,  XXXXXXX,  _______,  SYM,      KC_MPLY,  _______
   ),
   [_SYMBOLS] = LAYOUT_split_3x5_3(
@@ -456,27 +360,80 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
-    KC_LCTL,  _______,  _______,  _______,  GAMERRR,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  GAMEPAD,                      KC_WH_D,  MOUSERR,  _______,  _______,  KC_BTN2,
+    KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  MOUSERR,  _______,  _______,  KC_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
-  [_MOUSE] = LAYOUT_split_3x5_3(
-    KC_TAB,   KC_Q, KC_W, KC_E, KC_R,                      BASE,     KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
-    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,                      KC_WH_D,  BASE,     _______,  _______,  KC_BTN2,
-                                  KC_Q, KC_LSFT, KC_E,  BLLSPD0,  BLLSPD1,  XXXXXXX
-  ),
-  [_GAME] = LAYOUT_split_3x5_3(
-    KC_TAB, KC_W, KC_E, KC_R, KC_T,                        KC_Y, KC_U, KC_I,    KC_O,   KC_P,
-    KC_A, KC_S, KC_D, KC_F, KC_G,                        KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
-    KC_ESC, KC_X, KC_C, KC_V, KC_B,                     KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
-                   KC_LSFT, KC_BSPC, KC_LALT,   KC_ENT, KC_SPC, BASE 
-  ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
-    KC_TAB,   KC_Q, KC_W, KC_E, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
-    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
+    KC_TAB,   KC_Q, UPUP, KC_E, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
+    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
     KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
                           KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
-  )
+  ),
+  [_MOUSE] = LAYOUT_split_3x5_3(
+    _______, _______, _______, _______, _______,                      BASE,     KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
+    _______, _______, _______, _______, _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
+    _______, _______, _______, _______, _______,                      KC_WH_D,  BASE,     _______,  _______,  KC_BTN2,
+                               _______, _______, _______,   BLLSPD0,  BLLSPD1,  XXXXXXX
+  ),
+  [_MINECRAFT] = LAYOUT_split_3x5_3(
+    KC_TAB,   KC_1, UPUP, KC_2, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
+    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
+    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
+                          KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
+  ),
   // clang-format on
 };
+
+void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
+
+  if (on){
+    *totalState |= bit;
+  } else {
+    *totalState &= ~bit;
+  }
+
+  bool highNibble = bit >> 4;
+
+  uint8_t state = (0x03 << (highNibble << 2)) & *totalState;
+  uint8_t start = (0x0C << (highNibble << 2)) & *totalState;
+
+  state >>= (highNibble << 2);
+  start >>= (highNibble << 2);
+
+  if (state < 3){
+    switch (state){
+      case 1:
+        register_code(keyOne);
+        unregister_code(keyTwo);
+        break;
+      case 2:
+        unregister_code(keyOne);
+        register_code(keyTwo);
+        break;
+      default:
+        unregister_code(keyOne);
+        unregister_code(keyTwo);
+        break;
+    }
+
+    *totalState &= ~(0x0C << (highNibble << 2));
+    *totalState |= ((state << 2) << (highNibble << 2));
+    return;
+  }
+
+  switch (start) {
+    case 4:
+      unregister_code(keyOne);
+      register_code(keyTwo);
+      break;
+    case 8:
+      register_code(keyOne);
+      unregister_code(keyTwo);
+      break;
+    default:
+      unregister_code(keyOne);
+      unregister_code(keyTwo);
+      break;
+  }
+}
