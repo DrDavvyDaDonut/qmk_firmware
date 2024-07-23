@@ -100,10 +100,12 @@ uint8_t bllSpd = 1;
 uint8_t mouseSOCD = 0;
 uint8_t gameSOCD = 0;
 
+//  on startup
 void keyboard_post_init_user(void){
   combo_disable();
   set_single_persistent_default_layer(_BASE);
   pimoroni_trackball_set_rgbw(40,20,40,40);
+  swap_hands_off();
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -383,6 +385,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                           KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
   ),
   // clang-format on
+};
+
+const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
+  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
+  {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
+  {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
+  {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
+  {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}},
+  {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}},
+  {{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}},
+  {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}},
 };
 
 void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
