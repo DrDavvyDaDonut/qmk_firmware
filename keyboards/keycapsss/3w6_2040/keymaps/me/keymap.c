@@ -20,7 +20,15 @@ enum layers {
   _ADJUST,
   _GAMEPAD,
   _MOUSE,
-  _MINECRAFT
+  _MINECRAFT,
+  _FIGHTER
+};
+
+joystick_config_t joystick_axes[JOYSTICK_AXIS_COUNT] = {
+  JOYSTICK_AXIS_VIRTUAL,
+  JOYSTICK_AXIS_VIRTUAL,
+  JOYSTICK_AXIS_VIRTUAL,
+  JOYSTICK_AXIS_VIRTUAL
 };
 
 enum keycodes {
@@ -29,7 +37,7 @@ enum keycodes {
   BLLSPD2,
 
   //  gamer mouse
-  GAMERMS,
+  MOUSERR,
 
   //  socd cleaning
   SOCD_ML,
@@ -47,8 +55,27 @@ enum keycodes {
   UPUP,
   DOWN,
 
+  AR_D,
+  AR_L,
+  AR_R,
+  AR_U,
+
   //  scrollArrowToggle
-  toggle
+  toggle,
+
+  LS_UPUP,  //  left stick
+  LS_DOWN,
+  LS_LEFT,
+  LS_RGHT,
+  RS_UPUP,  //  right stick
+  RS_DOWN,
+  RS_LEFT,
+  RS_RGHT,
+
+  DP_UPUP,  //  d pad
+  DP_DOWN,
+  DP_LEFT,
+  DP_RGHT,
 };
 
 #define ctrlA     LCTL_T(KC_A)
@@ -73,33 +100,53 @@ enum keycodes {
 #define NUMPADD   MO(_NUM)
 #define MOUSERR   TO(_MOUSE)
 #define HKGAMER   TO(_HOLLOW)
+#define MCGAMER   TO(_MINECRAFT)
 #define GAMEPAD   TO(_GAMEPAD)
+#define FIGHTER   TO(_FIGHTER)
 
-uint8_t currButton = 0;
-uint8_t prevButton = 0;
+#define	BC_DOWN   JS_0   //  button cluster
+#define	BC_RGHT   JS_1
+#define	BC_LEFT   JS_2
+#define	BC_UPUP   JS_3
+#define	L1_PRSS   JS_4   //  bumpers
+#define	R1_PRSS   JS_5
+#define	L2_PRSS   JS_6   //  triggers
+#define	R2_PRSS   JS_7
+#define	GC_SLCT   JS_8   //  select
+#define	GC_STRT   JS_9   //  start
+#define	LS_PRSS   JS_10  //  sticks
+#define	RS_PRSS   JS_11
 
-bool scrollOrArrow = true;
-
-bool xNeg = false;
-bool yNeg = false;
-
-uint8_t xCount = 0;
-uint8_t yCount = 0;
-
-int8_t xSum = 0;
-int8_t ySum = 0;
-
-uint8_t moreShit;
-uint8_t vec;
-
-uint8_t pimoroniThreshold = 6;
+bool scrollOrArrow = false;
 
 uint8_t highest_layer = _BASE;
 
 uint8_t bllSpd = 1;
 uint8_t mouseSOCD = 0;
 uint8_t gameSOCD = 0;
+bool LSU = false;
+bool LSD = false;
+bool LSL = false;
+bool LSR = false;
+bool RSU = false;
+bool RSD = false;
+bool RSL = false;
+bool RSR = false;
+bool DPU = false;
+bool DPD = false;
+bool DPL = false;
+bool DPR = false;
 
+int8_t leftValue = 127;
+int8_t leftDiag = 90;
+int8_t rightValue = 127;
+int8_t rightDiag = 90;
+
+//  i used this because i couldn't get joystick_read_axis() to work
+int8_t leftHor = 0;
+int8_t leftVer = 0;
+int8_t rightHor = 0;
+int8_t rightVer = 0;
 //  on startup
 void keyboard_post_init_user(void){
   combo_disable();
@@ -108,6 +155,7 @@ void keyboard_post_init_user(void){
   swap_hands_off();
 }
 
+//  on layer change
 layer_state_t layer_state_set_user(layer_state_t state) {
   state = update_tri_layer_state(state, _SYMBOLS, _ALTER, _ADJUST);
   state = update_tri_layer_state(state, _SYMBOLS, _NUM, _ADJUST);
@@ -129,6 +177,17 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   return state;
 }
 
+void leftStick(void){
+  joystick_set_axis(0, leftHor * ((leftVer == 0) ? leftValue : leftDiag));
+  joystick_set_axis(1, leftVer * ((leftHor == 0) ? leftValue : leftDiag));
+}
+
+void rightStick(void){
+  joystick_set_axis(2, rightHor * ((rightVer == 0) ? rightValue : rightDiag));
+  joystick_set_axis(3, rightVer * ((rightHor == 0) ? rightValue : rightDiag));
+}
+
+//  process keycode
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case BLLSPD0:
@@ -161,7 +220,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
-    case GAMERMS:
+    case MOUSERR:
       if (record->event.pressed){
         layer_on(_GAMEPAD);
         layer_on(_MOUSE);
@@ -216,9 +275,129 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_W, KC_S);
       return false;
       break;
+    case AR_L:
+      socdCleaner(&gameSOCD, 0x01, record->event.pressed, KC_LEFT, KC_RGHT);
+      return false;
+      break;
+    case AR_R:
+      socdCleaner(&gameSOCD, 0x02, record->event.pressed, KC_LEFT, KC_RGHT);
+      return false;
+      break;
+    case AR_U:
+      socdCleaner(&gameSOCD, 0x10, record->event.pressed, KC_UP, KC_DOWN);
+      return false;
+      break;
+    case AR_D:
+      socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_UP, KC_DOWN);
+      return false;
+      break;
     case toggle:
       if (record->event.pressed){
         scrollOrArrow = ! scrollOrArrow;
+      }
+      return false;
+      break;
+    case LS_UPUP:
+      LSU = record->event.pressed ? true : false;
+      leftVer = record->event.pressed ? -1  : (LSD ? 1 : 0);
+      leftStick();
+      return false;
+      break;
+    case LS_DOWN:
+      LSD = record->event.pressed ? true : false;
+      leftVer = record->event.pressed ? 1  : (LSU ? -1 : 0);
+      leftStick();
+      return false;
+      break;
+    case LS_LEFT:
+      LSL = record->event.pressed ? true : false;
+      leftHor = record->event.pressed ? -1  : (LSR ? 1 : 0);
+      leftStick();
+      return false;
+      break;
+    case LS_RGHT:
+      LSR = record->event.pressed ? true : false;
+      leftHor = record->event.pressed ? 1  : (LSL ? -1 : 0);
+      leftStick();
+      return false;
+      break;
+    case RS_UPUP:
+      RSU = record->event.pressed ? true : false;
+      rightVer = record->event.pressed ? -1  : (RSD ? 1 : 0);
+      rightStick();
+      return false;
+      break;
+    case RS_DOWN:
+      RSD = record->event.pressed ? true : false;
+      rightVer = record->event.pressed ? 1  : (RSU ? -1 : 0);
+      rightStick();
+      return false;
+      break;
+    case RS_LEFT:
+      RSL = record->event.pressed ? true : false;
+      rightHor = record->event.pressed ? -1  : (RSR ? 1 : 0);
+      rightStick();
+      return false;
+      break;
+    case RS_RGHT:
+      RSR = record->event.pressed ? true : false;
+      rightHor = record->event.pressed ? 1  : (RSL ? -1 : 0);
+      rightStick();
+      return false;
+      break;
+    case DP_UPUP:
+      if(record->event.pressed){
+        DPU = true;
+        register_joystick_button(12);
+        unregister_joystick_button(13);
+      } else {
+        DPU = false;
+        unregister_joystick_button(12);
+        if (DPD) {
+          register_joystick_button(13);
+        }
+      }
+      return false;
+      break;
+    case DP_DOWN:
+      if(record->event.pressed){
+        DPD = true;
+        register_joystick_button(13);
+        unregister_joystick_button(12);
+      } else {
+        DPD = false;
+        unregister_joystick_button(13);
+        if (DPU) {
+          register_joystick_button(12);
+        }
+      }
+      return false;
+      break;
+    case DP_LEFT:
+      if(record->event.pressed){
+        DPL = true;
+        register_joystick_button(14);
+        unregister_joystick_button(15);
+      } else {
+        DPL = false;
+        unregister_joystick_button(14);
+        if (DPR) {
+          register_joystick_button(15);
+        }
+      }
+      return false;
+      break;
+    case DP_RGHT:
+      if(record->event.pressed){
+        DPR = true;
+        register_joystick_button(15);
+        unregister_joystick_button(14);
+      } else {
+        DPR = false;
+        unregister_joystick_button(15);
+        if (DPL) {
+          register_joystick_button(14);
+        }
       }
       return false;
       break;
@@ -229,6 +408,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
+//  custom timing for shift
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case shftZ:
@@ -242,6 +422,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
   }
 }
 
+//  quick raise after space
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case spcSymb:
@@ -251,7 +432,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
   }
 }
 
-
+//  numpad override
 const key_override_t shiftPlusMinus = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PMNS);
 const key_override_t shiftMultDivid = ko_make_basic(MOD_MASK_SHIFT, KC_PAST, KC_PSLS);
 
@@ -261,6 +442,83 @@ const key_override_t **key_overrides = (const key_override_t *[]){
     &shiftMultDivid,
     NULL // Null terminate the array of overrides!
 };
+
+//  mouse 
+
+int8_t x = 0;
+int8_t y = 0;
+uint8_t count = 0;
+
+uint8_t currButton = 0;
+uint8_t prevButton = 0;
+
+uint16_t pimoroniThreshold = 1;
+uint16_t pimoroniCountThreshold = 50;
+
+void sendCodes(uint8_t up, uint8_t down, uint8_t left, uint8_t right){
+  unregister_code(left);
+  unregister_code(right);
+  unregister_code(down);
+  unregister_code(up);
+
+  //  count on bit only
+  if (count & 0x80){
+    if (x > pimoroniThreshold){
+      register_code(right);
+    } else if (x < -pimoroniThreshold){
+      register_code(left);
+    }
+    if (y > pimoroniThreshold){
+      register_code(down);
+    } else if (y < -pimoroniThreshold){
+      register_code(up);
+    }
+  }
+}
+
+void pimoroniBallHandling(report_mouse_t mouse_report, uint8_t up, uint8_t down, uint8_t left, uint8_t right){
+  
+  //  ball move
+
+  if (mouse_report.x){
+    count |= 0x80;      //  turn on counting bit
+    if (mouse_report.x > 0){
+      x++;
+    } else {
+      x--;
+    }
+  }
+  
+  if (mouse_report.y){
+    count |= 0x80;      //  turn on counting bit
+    if (mouse_report.y > 0){
+      y++;
+    } else {
+      y--;
+    }
+  }
+
+  //  update count if either counting bits are on
+  if (count & 0xC0){
+    count++;
+  }
+  //  if cumulitive distance greater than threshold, update
+  if (x*x + y*y > pimoroniThreshold*pimoroniThreshold){
+    pimoroni_trackball_set_rgbw(255,255,255,255);
+    sendCodes(up, down, left, right);
+    count = 0x40;
+    x = 0;
+    y = 0;
+    return;
+  }
+  if ((count & 0x3f) > pimoroniCountThreshold){
+    pimoroni_trackball_set_rgbw(0,0,0,0);
+    sendCodes(up, down, left, right);
+    count = 0x40;
+    x = 0;
+    y = 0;
+  }
+}
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
@@ -277,30 +535,26 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
   //  activates on edge of presses
   if (prevButton != currButton){
-    
     action_exec(MAKE_KEYEVENT(7, 2, currButton));
 
     // only update if different
     prevButton = currButton;
+
   }
 
   //  direction handling
 
+
   switch (highest_layer){
     case _GAMEPAD:
-      
-      
-
-      break; 
-    case _ALTER:
-
+      // pimoroniBallHandling(mouse_report, KC_UP, KC_DOWN, KC_LEFT, KC_RGHT);
       break; 
     case _BASE:
       if (scrollOrArrow){
         mouse_report.h = mouse_report.x;
         mouse_report.v = -mouse_report.y;
       } else {
-
+        // pimoroniBallHandling(mouse_reporqt, KC_UP, KC_DOWN, KC_LEFT, KC_RGHT);
       }
       break; 
     default:
@@ -315,6 +569,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
 }
 
+//  layers
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /*
@@ -343,9 +598,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                      NUMPADD, KC_G, KC_LALT,   KC_ENT, KC_SPC, BASE
   ),
   [_ALTER] = LAYOUT_split_3x5_3(
-    KC_TAB,   XXXXXXX,  KC_UP,    XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
-    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  XXXXXXX,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
-    KC_LSFT,  XXXXXXX,  KC_LGUI,  XXXXXXX,  XXXXXXX,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
+    KC_TAB,   XXXXXXX,  KC_UP,    FIGHTER,  HKGAMER,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
+    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  GAMEPAD,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
+    KC_LSFT,  XXXXXXX,  KC_LGUI,  XXXXXXX,  MCGAMER,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
                                   XXXXXXX,  XXXXXXX,  _______,  SYM,      KC_MPLY,  _______
   ),
   [_SYMBOLS] = LAYOUT_split_3x5_3(
@@ -358,7 +613,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PAST,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_SPC,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PENT,
-                                  _______,  KC_MPLY,  KC_MPLY,  KC_NUM,   zeroSym,  SYM    
+                                  _______,  KC_MPLY,  KC_MPLY,  KC_ENT,   zeroSym,  KC_NUM    
   ),
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
@@ -367,8 +622,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
-    KC_TAB,   KC_Q, UPUP, KC_E, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
-    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
+    KC_TAB,   KC_Q, KC_W, KC_E, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
+    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
     KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
                           KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
   ),
@@ -379,16 +634,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                _______, _______, _______,   BLLSPD0,  BLLSPD1,  XXXXXXX
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,   KC_1, UPUP, KC_2, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
-    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
-    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
-                          KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
+    KC_TAB,SH_T(KC_BTN3),UPUP,  KC_3,  KC_4,                KC_7,  KC_6,  UPUP,  XXXXXXX,  KC_F3,
+    SH_T(KC_F5),  LEFT,  DOWN,  RGHT,  KC_E,                KC_5,  RGHT,  DOWN,  LEFT,  _______,
+    KC_LSFT,      KC_C,  KC_Q,  KC_8,  KC_9,                XXXXXXX,BASE, C(KC_Q),KC_ESC,KC_LSFT,
+                                KC_SPC,KC_1,KC_LALT,KC_LALT,KC_1,  _______
   ),
+  [_FIGHTER] = LAYOUT_split_3x5_3(
+    KC_TAB,   _______,  LS_UPUP,  _______,  _______,                      _______,  _______,  L1_PRSS,  R1_PRSS,  _______,
+    _______,  LS_LEFT,  LS_DOWN,  LS_RGHT,  _______,                      _______,  _______,  L2_PRSS,  R2_PRSS,  KC_V,
+    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  KC_ENT,
+                                  _______,  _______,  _______,  KC_ESC,  _______,  BASE
+  )
   // clang-format on
 };
 
 const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
-  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
+  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},                   
   {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
   {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
