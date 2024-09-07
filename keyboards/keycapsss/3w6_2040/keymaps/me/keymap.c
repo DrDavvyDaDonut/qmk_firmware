@@ -470,10 +470,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                 KC_SPC,KC_1,KC_LALT,KC_LALT,KC_1,  _______
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
-    KC_TAB,   KC_Q,  AR_U,  KC_E,  _______,                      _______,  _______,  KC_B,     KC_X,     _______,
-    _______,  AR_L,  AR_D,  AR_R,  _______,                      _______,  KC_Z,     KC_C,     KC_LSFT,  KC_V,
-    KC_ESC,   _______,  _______,  _______,  _______,             _______,  _______,  _______,  _______,  ,
-                                  KC_Q,  KC_LSFT,  KC_E,  KC_ENT,  KC_SPC,  BASE
+    KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
+    _______,  AR_L,     AR_D,     AR_R,     _______,                      _______,  KC_Z,     KC_C,     KC_LSFT,  KC_V,
+    KC_ESC,   _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+                                  KC_Q,     KC_LSFT,  KC_E,     KC_ENT,   KC_SPC,   BASE
   )
   // clang-format on
 };
