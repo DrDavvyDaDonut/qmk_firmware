@@ -51,12 +51,3 @@
 #define BOOTMAGIC_COLUMN_RIGHT 0
 
 #define RGBLIGHT_SLEEP
-
-// Joystick Button Count
-#define JOYSTICK_BUTTON_COUNT 17
-
-// Joystick Axes Count
-#define JOYSTICK_AXIS_COUNT 4
-
-// Joystick Axes Resolution
-#define JOYSTICK_AXIS_RESOLUTION 8
