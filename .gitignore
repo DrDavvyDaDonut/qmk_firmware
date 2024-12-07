@@ -1,3 +1,10 @@
+# actually we're trying again
+keyboards/
+!keyboards/draculad/**
+!keyboards/gboards/**
+!keyboards/keycapsss/**
+!keyboards/preonic/**
+
 # Junk files
 *.bak
 *.swp
