@@ -36,7 +36,11 @@
         ]
     },
     "split": {
+<<<<<<< HEAD:keyboards/draculad/info.json
         "soft_serial_pin": "D2",
+=======
+        "enabled": true,
+>>>>>>> a12ff287eed88d928430b63f4f7faff3b6fb5ebc:keyboards/draculad/keyboard.json
         "encoder": {
             "right": {
                 "rotary": [
@@ -44,6 +48,9 @@
                     {"pin_a": "B4", "pin_b": "B5", "resolution": 1}
                 ]
             }
+        },
+        "serial": {
+            "pin": "D2"
         }
     },
     "processor": "atmega32u4",

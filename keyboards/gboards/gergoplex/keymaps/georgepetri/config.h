@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+<<<<<<< HEAD:keyboards/gboards/gergoplex/keymaps/georgepetri/config.h
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 
 #undef DEBOUNCE
@@ -29,3 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define COMBO_VARIABLE_LEN
 
 #define TAPPING_TERM_PER_KEY
+=======
+//#define USE_I2C
+
+#define FORCE_NKRO
+>>>>>>> a12ff287eed88d928430b63f4f7faff3b6fb5ebc:keyboards/adkb96/keymaps/default/config.h

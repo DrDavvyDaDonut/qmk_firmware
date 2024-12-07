@@ -20,8 +20,12 @@ enum layers {
   _ADJUST,
   _GAMEPAD,
   _MOUSE,
+  _FISH,
+  _GUITAR,
   _MINECRAFT,
-  _FIGHTER
+  _FIGHTER,
+  _POKEONE,
+  _POKETWO
 };
 
 enum keycodes {
@@ -81,6 +85,10 @@ enum keycodes {
 #define MCGAMER   TO(_MINECRAFT)
 #define GAMEPAD   TO(_GAMEPAD)
 #define FIGHTER   TO(_FIGHTER)
+#define FISHING   TO(_FISH)
+#define GUITARR   TO(_GUITAR)
+#define POKEONE   TO(_POKEONE)
+#define POKETWO   TO(_POKETWO)
 
 bool scrollOrArrow = false;
 
@@ -429,8 +437,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ALTER] = LAYOUT_split_3x5_3(
     KC_TAB,   XXXXXXX,  KC_UP,    FIGHTER,  HKGAMER,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  GAMEPAD,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
-    KC_LSFT,  XXXXXXX,  KC_LGUI,  XXXXXXX,  MCGAMER,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
-                                  XXXXXXX,  XXXXXXX,  _______,  SYM,      KC_MPLY,  _______
+    KC_LSFT,  XXXXXXX,  KC_LGUI,  GUITARR,  MCGAMER,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
+                                  POKEONE,  POKETWO,  _______,  SYM,      KC_MPLY,  _______
   ),
   [_SYMBOLS] = LAYOUT_split_3x5_3(
     KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
@@ -447,7 +455,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
     KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  MOUSERR,  _______,  _______,  KC_BTN2,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  MOUSERR,  POKEONE,  POKETWO,  KC_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
@@ -461,31 +469,57 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______, _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
     _______, _______, _______, _______, _______,                      KC_WH_D,  BASE,     _______,  _______,  KC_BTN2,
                                _______, _______, _______,   BLLSPD0,  BLLSPD1,  XXXXXXX
+  ), 
+  [_FISH] = LAYOUT_split_3x5_3(
+    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+                                  _______,  _______,  _______,  _______,  _______,  BASE
+  ),
+  [_GUITAR] = LAYOUT_split_3x5_3(
+    _______,  _______,  _______,  _______,  _______,                      _______,  KC_7,  KC_8,  KC_9,  _______,
+    KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         _______,  KC_4,  KC_5,  KC_6,  _______,
+    _______,  _______,  _______,  _______,  _______,                      _______,  KC_1,  KC_2,  KC_3,  _______,
+                                  _______,  KC_T,     KC_Y,     _______,  _______,  FISHING
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,SH_T(KC_BTN3),UPUP,  KC_3,  KC_4,                KC_7,  KC_6,  UPUP,  XXXXXXX,  KC_F3,
-    SH_T(KC_F5),  LEFT,  DOWN,  RGHT,  KC_E,                KC_5,  RGHT,  DOWN,  LEFT,  _______,
-    KC_LSFT,      KC_C,  KC_Q,  KC_8,  KC_9,                XXXXXXX,BASE, C(KC_Q),KC_ESC,KC_LSFT,
-                                KC_SPC,KC_1,KC_LALT,KC_LALT,KC_1,  _______
+    KC_TAB,   KC_T, UPUP, KC_G, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
+    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
+    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
+                    KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
     KC_LCTL,  AR_L,     AR_D,     AR_R,     _______,                      _______,  KC_Z,     KC_C,     KC_LSFT,  KC_V,
     KC_ESC,   _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
                                   KC_Q,     KC_BSPC,  KC_E,    KC_ENT,    KC_SPC,   BASE
+  ),
+  [_POKEONE] = LAYOUT_split_3x5_3(
+    _______,  _______,  KC_W,     _______,  _______,                      _______,  KC_U,     KC_I,     KC_O,  _______,
+    _______,  KC_A,     KC_S,     KC_D,     _______,                      _______,  KC_L,     KC_J,     KC_K,     KC_W,
+    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+                                  _______,  KC_W,     _______,  KC_ESC,   _______,  BASE
+  ),
+  [_POKETWO] = LAYOUT_split_3x5_3(
+    _______,  _______,  KC_T,     _______,  _______,                      _______,  KC_P4,    KC_P5,    KC_P6,  _______,
+    _______,  KC_F,     KC_G,     KC_H,     _______,                      _______,  KC_P3,    KC_P1,    KC_P2,  KC_T,
+    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+                                  _______,  KC_T,     _______,  KC_ESC,   _______,  BASE
   )
   // clang-format on
 };
 
+//  enter the row and column, recieve new (column, row)
+
 const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
-  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},                   
+  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
   {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
   {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
-  {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
+  {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}},
   {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}},
   {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}},
   {{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}},
-  {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}},
+  {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 };
 
 void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
