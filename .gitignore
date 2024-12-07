@@ -1,11 +1,3 @@
-# Only keyboards I want
-/keyboards/**
-!/keyboards/draculad/**
-!/keyboards/gboards/**
-!/keyboards/keycapsss/**
-!/keyboards/keycapsss/3w6_2040/**
-!/keyboards/preonic/**
-
 # Junk files
 *.bak
 *.swp
