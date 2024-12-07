@@ -1,5 +1,5 @@
 # actually we're trying again
-keyboards/
+keyboards/**
 !keyboards/draculad/**
 !keyboards/gboards/**
 !keyboards/keycapsss/**
