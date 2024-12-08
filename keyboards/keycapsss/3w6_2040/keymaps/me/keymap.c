@@ -273,11 +273,9 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 const key_override_t shiftPlusMinus = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PMNS);
 const key_override_t shiftMultDivid = ko_make_basic(MOD_MASK_SHIFT, KC_PAST, KC_PSLS);
 
-// This globally defines all key overrides to be used
-const key_override_t **key_overrides = (const key_override_t *[]){
+const key_override_t *key_overrides[] = {
     &shiftPlusMinus,
-    &shiftMultDivid,
-    NULL // Null terminate the array of overrides!
+    &shiftMultDivid
 };
 
 //  mouse 
@@ -483,10 +481,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  KC_T,     KC_Y,     _______,  _______,  FISHING
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,   KC_T, UPUP, KC_G, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
-    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
-    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
-                    KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
+    KC_TAB,   SH_T(KC_T), UPUP, KC_G, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
+    KC_LCTL,  LEFT,       DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_ENT,    
+    KC_SPC,   KC_Z,       KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
+                                KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_B, BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
@@ -510,8 +508,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 //  enter the row and column, recieve new (column, row)
+//  default (NO SWAPPING)
+/*
+  {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}},
+  {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}},
+  {{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}},
+  {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}},
+  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
+  {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
+  {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
+  {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
+*/
 
-const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
+//  pure swap  
+/*
+  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
+  {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
+  {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
+  {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
+  {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}},
+  {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}},
+  {{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}},
+  {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}},
+*/
+
+//  swap except the bottom keys
+/*
   {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
   {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
   {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
@@ -519,6 +541,17 @@ const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}},
   {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}},
   {{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}},
+  {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
+*/
+
+const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
+  {{0, 0}, {1, 0}, {2, 0}, {3, 7}, {4, 4}},
+  {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 5}},
+  {{0, 2}, {1, 2}, {2, 2}, {3, 6}, {4, 6}},
+  {{0, 3}, {1, 3}, {2, 6}, {1, 6}, {0, 6}},
+  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
+  {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
+  {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 };
 
