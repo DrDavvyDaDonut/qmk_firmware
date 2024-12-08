@@ -19,7 +19,6 @@ enum layers {
   _NUM,
   _ADJUST,
   _GAMEPAD,
-  _MOUSE,
   _FISH,
   _GUITAR,
   _MINECRAFT,
@@ -29,15 +28,8 @@ enum layers {
 };
 
 enum keycodes {
-  BLLSPD0 = SAFE_RANGE,
-  BLLSPD1,
-  BLLSPD2,
-
-  //  gamer mouse
-  MOUSERR,
-
   //  socd cleaning
-  SOCD_ML,
+  SOCD_ML = SAFE_RANGE,
   SOCD_MR,
   SOCD_MU,
   SOCD_MD,
@@ -71,6 +63,8 @@ enum keycodes {
 #define rAltM     RALT_T(KC_M)
 #define winLeft   S(G(KC_LEFT))
 #define winRght   S(G(KC_RGHT))
+
+#define swpT      SH_T(KC_T)
 
 #define spcSymb   LT(_SYMBOLS, KC_SPC)
 #define entSymb   LT(_SYMBOLS, KC_ENT)
@@ -131,43 +125,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 //  process keycode
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
-    case BLLSPD0:
-      if (record->event.pressed){
-        bllSpd = 1;
-        register_code(KC_ACL0);
-      } else {
-        bllSpd = 3;
-        unregister_code(KC_ACL0);
-      }
-      return false;
-      break;
-    case BLLSPD1:
-      if (record->event.pressed){
-        bllSpd = 8;
-        register_code(KC_ACL1);
-      } else {
-        bllSpd = 3;
-        unregister_code(KC_ACL1);
-      }
-      return false;
-      break;
-    case BLLSPD2:
-      if (record->event.pressed){
-        bllSpd = 16;
-        register_code(KC_ACL2);
-      } else {
-        bllSpd = 3;
-        unregister_code(KC_ACL2);
-      }
-      return false;
-      break;
-    case MOUSERR:
-      if (record->event.pressed){
-        layer_on(_GAMEPAD);
-        layer_on(_MOUSE);
-      }
-      return false;
-      break;
     case SOCD_ML:
       socdCleaner(&mouseSOCD, 0x01, record->event.pressed, KC_MS_L, KC_MS_R);
       return false;
@@ -357,14 +314,6 @@ void pimoroniBallHandling(report_mouse_t mouse_report, uint8_t up, uint8_t down,
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
-  //  handling pure mousing
-  if (highest_layer == _MOUSE){
-    mouse_report.x = mouse_report.x * bllSpd;
-    mouse_report.y = mouse_report.y * bllSpd;
-
-    return mouse_report;
-  }
-
   //  handling ball presses each cycle
   currButton = mouse_report.buttons;
 
@@ -427,16 +376,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   NUMPADD,  KC_BSPC,  quotAlt,  entSymb,  spcSymb,  toggle 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
-    KC_TAB, KC_W, HK_U, KC_R, KC_T,                    KC_Y, KC_U, KC_I,    KC_O,   KC_P,
-    KC_A,   HK_L, HK_D, HK_R, KC_G,                    KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
-    KC_ESC, KC_X, KC_C, KC_V, KC_B,                    KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
-                     NUMPADD, KC_G, KC_LALT,   KC_ESC, KC_SPC, BASE
+    KC_TAB, KC_W, HK_U, KC_R, KC_T,                  KC_Y, KC_U, KC_I,    KC_O,   KC_P,
+    KC_A,   HK_L, HK_D, HK_R, KC_G,                  KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
+    KC_ESC, KC_X, KC_C, KC_V, KC_B,                  KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
+                     NUMPADD, KC_G, KC_LALT, KC_ESC, KC_SPC, BASE
   ),
   [_ALTER] = LAYOUT_split_3x5_3(
     KC_TAB,   XXXXXXX,  KC_UP,    FIGHTER,  HKGAMER,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  GAMEPAD,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
     KC_LSFT,  XXXXXXX,  KC_LGUI,  GUITARR,  MCGAMER,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
-                                  POKEONE,  POKETWO,  _______,  SYM,      KC_MPLY,  _______
+                                  _______,  _______,  _______,  SYM,      KC_MPLY,  _______
   ),
   [_SYMBOLS] = LAYOUT_split_3x5_3(
     KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
@@ -453,21 +402,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
     KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  MOUSERR,  POKEONE,  POKETWO,  KC_BTN2,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  _______,  _______,  _______,  KC_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
-    KC_TAB,   KC_T, KC_W, KC_G, KC_R,             KC_Y, KC_U, KC_I,    KC_O,    KC_P,    
-    KC_LCTL,  KC_A, KC_S, KC_D, KC_F,             KC_H, KC_J, KC_K,    KC_L,    KC_ENT,    
-    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,             KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  
-                          KC_Q, KC_LSFT, KC_E, KC_ESC, KC_SPC, BASE 
+    KC_TAB,   swpT, UPUP, KC_G, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
+    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_ENT,    
+    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
+                          KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_B, BASE 
   ),
-  [_MOUSE] = LAYOUT_split_3x5_3(
-    _______, _______, _______, _______, _______,                      BASE,     KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
-    _______, _______, _______, _______, _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    _______, _______, _______, _______, _______,                      KC_WH_D,  BASE,     _______,  _______,  KC_BTN2,
-                               _______, _______, _______,   BLLSPD0,  BLLSPD1,  XXXXXXX
-  ), 
   [_FISH] = LAYOUT_split_3x5_3(
     _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
     _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
@@ -481,27 +424,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  KC_T,     KC_Y,     _______,  _______,  FISHING
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,   SH_T(KC_T), UPUP, KC_G, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
-    KC_LCTL,  LEFT,       DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_ENT,    
-    KC_SPC,   KC_Z,       KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
-                                KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_B, BASE 
+    KC_TAB,   swpT, UPUP, KC_G, KC_R,                 KC_Y, KC_U, KC_I, KC_O, KC_P,    
+    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                 KC_H, KC_J, KC_K, KC_L, KC_ENT,    
+    KC_LSFT,  KC_Z, KC_X, KC_C, KC_V,                 KC_N, KC_M, KC_1, KC_2, KC_3,  
+                          KC_Q, KC_SPC, KC_E, KC_ESC, KC_B, BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
     KC_LCTL,  AR_L,     AR_D,     AR_R,     _______,                      _______,  KC_Z,     KC_C,     KC_LSFT,  KC_V,
-    KC_ESC,   _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+    KC_ESC,   POKEONE,  POKETWO,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
                                   KC_Q,     KC_BSPC,  KC_E,    KC_ENT,    KC_SPC,   BASE
   ),
   [_POKEONE] = LAYOUT_split_3x5_3(
     _______,  _______,  KC_W,     _______,  _______,                      _______,  KC_U,     KC_I,     KC_O,  _______,
     _______,  KC_A,     KC_S,     KC_D,     _______,                      _______,  KC_L,     KC_J,     KC_K,     KC_W,
-    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+    FIGHTER,  POKEONE,  POKETWO,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
                                   _______,  KC_W,     _______,  KC_ESC,   _______,  BASE
   ),
   [_POKETWO] = LAYOUT_split_3x5_3(
     _______,  _______,  KC_T,     _______,  _______,                      _______,  KC_P4,    KC_P5,    KC_P6,  _______,
     _______,  KC_F,     KC_G,     KC_H,     _______,                      _______,  KC_P3,    KC_P1,    KC_P2,  KC_T,
-    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
+    FIGHTER,  POKEONE,  POKETWO,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
                                   _______,  KC_T,     _______,  KC_ESC,   _______,  BASE
   )
   // clang-format on
