@@ -64,7 +64,10 @@ enum keycodes {
 #define winLeft   S(G(KC_LEFT))
 #define winRght   S(G(KC_RGHT))
 
-#define swpT      SH_T(KC_T)
+#define swpG      SH_T(KC_G)
+#define swpT      SH_T(KC_3)
+#define MS_3      MS_BTN3
+#define DROP      C(KC_Q)
 
 #define spcSymb   LT(_SYMBOLS, KC_SPC)
 #define entSymb   LT(_SYMBOLS, KC_ENT)
@@ -406,10 +409,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
-    KC_TAB,   swpT, UPUP, KC_G, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
+    KC_T,     swpG, UPUP, KC_B, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
     KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_ENT,    
     KC_SPC,   KC_Z, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
-                          KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_B, BASE 
+                          KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_TAB, BASE 
   ),
   [_FISH] = LAYOUT_split_3x5_3(
     _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
@@ -424,10 +427,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  KC_T,     KC_Y,     _______,  _______,  FISHING
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,   swpT, UPUP, KC_G, KC_R,                 KC_Y, KC_U, KC_I, KC_O, KC_P,    
-    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                 KC_H, KC_J, KC_K, KC_L, KC_ENT,    
-    KC_LSFT,  KC_Z, KC_X, KC_C, KC_V,                 KC_N, KC_M, KC_1, KC_2, KC_3,  
-                          KC_Q, KC_SPC, KC_E, KC_ESC, KC_B, BASE 
+    KC_TAB,   swpT, KC_W, KC_4,   KC_5,               KC_8,   KC_7, KC_I,   KC_O, KC_P,    
+    KC_F5,    KC_A, KC_S, KC_D,   KC_6,               KC_9,   KC_J, KC_K,   KC_L, KC_ENT,    
+    KC_LSFT,  KC_Z, KC_X, KC_E,   KC_Q,               DROP,   MS_3, KC_SPC, KC_1, KC_2,  
+                          KC_SPC, KC_1, KC_2, KC_ESC, KC_F3,  BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
@@ -436,14 +439,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   KC_Q,     KC_BSPC,  KC_E,    KC_ENT,    KC_SPC,   BASE
   ),
   [_POKEONE] = LAYOUT_split_3x5_3(
-    _______,  _______,  KC_W,     _______,  _______,                      _______,  KC_U,     KC_I,     KC_O,  _______,
+    _______,  _______,  KC_W,     _______,  _______,                      _______,  KC_U,     KC_I,     KC_O,     _______,
     _______,  KC_A,     KC_S,     KC_D,     _______,                      _______,  KC_L,     KC_J,     KC_K,     KC_W,
     FIGHTER,  POKEONE,  POKETWO,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
                                   _______,  KC_W,     _______,  KC_ESC,   _______,  BASE
   ),
   [_POKETWO] = LAYOUT_split_3x5_3(
-    _______,  _______,  KC_T,     _______,  _______,                      _______,  KC_P4,    KC_P5,    KC_P6,  _______,
-    _______,  KC_F,     KC_G,     KC_H,     _______,                      _______,  KC_P3,    KC_P1,    KC_P2,  KC_T,
+    _______,  _______,  KC_T,     _______,  _______,                      _______,  KC_P4,    KC_P5,    KC_P6,    _______,
+    _______,  KC_F,     KC_G,     KC_H,     _______,                      _______,  KC_P3,    KC_P1,    KC_P2,    KC_T,
     FIGHTER,  POKEONE,  POKETWO,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
                                   _______,  KC_T,     _______,  KC_ESC,   _______,  BASE
   )
@@ -475,20 +478,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}},
 */
 
-//  swap except the bottom keys
-/*
-  {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
-  {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
-  {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
-  {{0, 3}, {1, 3}, {2, 3}, {3, 3}, {4, 3}},
-  {{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}},
-  {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}},
-  {{0, 2}, {1, 2}, {2, 2}, {3, 2}, {4, 2}},
-  {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
-*/
-
 const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
-  {{0, 0}, {1, 0}, {2, 0}, {3, 7}, {4, 4}},
+  {{3, 7}, {1, 0}, {2, 0}, {3, 4}, {4, 4}},
   {{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 5}},
   {{0, 2}, {1, 2}, {2, 2}, {3, 6}, {4, 6}},
   {{0, 3}, {1, 3}, {2, 6}, {1, 6}, {0, 6}},
