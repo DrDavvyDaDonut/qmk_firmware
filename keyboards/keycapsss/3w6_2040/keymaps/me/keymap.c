@@ -232,10 +232,12 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 //  numpad override
 const key_override_t shiftPlusMinus = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PMNS);
 const key_override_t shiftMultDivid = ko_make_basic(MOD_MASK_SHIFT, KC_PAST, KC_PSLS);
+const key_override_t shiftEntrPriod = ko_make_basic(MOD_MASK_SHIFT, KC_PENT, KC_PDOT);
 
 const key_override_t *key_overrides[] = {
     &shiftPlusMinus,
-    &shiftMultDivid
+    &shiftMultDivid,
+    &shiftEntrPriod
 };
 
 //  mouse 
