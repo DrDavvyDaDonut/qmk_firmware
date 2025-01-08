@@ -1,8 +1,3 @@
-// Copyright 2021 weteor | 2022 Conor Burns (@Conor-Burns)
-// Copyright 2023 Ben Roe (@keycapsss)
-// Copyright 2023 Tom Barnes (@keyboard-magpie)
-// SPDX-License-Identifier: GPL-2.0-or-later
-
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
 #ifdef CONSOLE_ENABLE
@@ -48,9 +43,6 @@ enum keycodes {
   AR_L,
   AR_R,
   AR_U,
-
-  //  scrollArrowToggle
-  toggle
 };
 
 #define ctrlA     LCTL_T(KC_A)
@@ -87,8 +79,6 @@ enum keycodes {
 #define POKEONE   TO(_POKEONE)
 #define POKETWO   TO(_POKETWO)
 
-bool scrollOrArrow = false;
-
 uint8_t highest_layer = _BASE;
 
 uint8_t bllSpd = 1;
@@ -99,7 +89,6 @@ uint8_t gameSOCD = 0;
 void keyboard_post_init_user(void){
   combo_disable();
   set_single_persistent_default_layer(_BASE);
-  pimoroni_trackball_set_rgbw(40,20,40,40);
   swap_hands_off();
 }
 
@@ -192,12 +181,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_UP, KC_DOWN);
       return false;
       break;
-    case toggle:
-      if (record->event.pressed){
-        scrollOrArrow = ! scrollOrArrow;
-      }
-      return false;
-      break;
     default:
       return true;
       break;
@@ -240,119 +223,17 @@ const key_override_t *key_overrides[] = {
     &shiftEntrPriod
 };
 
-//  mouse 
-
-int8_t x = 0;
-int8_t y = 0;
-uint8_t count = 0;
-
-uint8_t currButton = 0;
-uint8_t prevButton = 0;
-
-uint16_t pimoroniThreshold = 1;
-uint16_t pimoroniCountThreshold = 50;
-
-void sendCodes(uint8_t up, uint8_t down, uint8_t left, uint8_t right){
-  unregister_code(left);
-  unregister_code(right);
-  unregister_code(down);
-  unregister_code(up);
-
-  //  count on bit only
-  if (count & 0x80){
-    if (x > pimoroniThreshold){
-      register_code(right);
-    } else if (x < -pimoroniThreshold){
-      register_code(left);
-    }
-    if (y > pimoroniThreshold){
-      register_code(down);
-    } else if (y < -pimoroniThreshold){
-      register_code(up);
-    }
-  }
-}
-
-void pimoroniBallHandling(report_mouse_t mouse_report, uint8_t up, uint8_t down, uint8_t left, uint8_t right){
-  
-  //  ball move
-
-  if (mouse_report.x){
-    count |= 0x80;      //  turn on counting bit
-    if (mouse_report.x > 0){
-      x++;
-    } else {
-      x--;
-    }
-  }
-  
-  if (mouse_report.y){
-    count |= 0x80;      //  turn on counting bit
-    if (mouse_report.y > 0){
-      y++;
-    } else {
-      y--;
-    }
-  }
-
-  //  update count if either counting bits are on
-  if (count & 0xC0){
-    count++;
-  }
-  //  if cumulitive distance greater than threshold, update
-  if (x*x + y*y > pimoroniThreshold*pimoroniThreshold){
-    pimoroni_trackball_set_rgbw(255,255,255,255);
-    sendCodes(up, down, left, right);
-    count = 0x40;
-    x = 0;
-    y = 0;
-    return;
-  }
-  if ((count & 0x3f) > pimoroniCountThreshold){
-    pimoroni_trackball_set_rgbw(0,0,0,0);
-    sendCodes(up, down, left, right);
-    count = 0x40;
-    x = 0;
-    y = 0;
-  }
-}
-
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-
-  //  handling ball presses each cycle
-  currButton = mouse_report.buttons;
-
-  //  activates on edge of presses
-  if (prevButton != currButton){
-    action_exec(MAKE_KEYEVENT(7, 2, currButton));
-
-    // only update if different
-    prevButton = currButton;
-
-  }
-
-  //  direction handling
 
 
   switch (highest_layer){
     case _GAMEPAD:
-      // pimoroniBallHandling(mouse_report, KC_UP, KC_DOWN, KC_LEFT, KC_RGHT);
       break; 
     case _BASE:
-      if (scrollOrArrow){
-        mouse_report.h = mouse_report.x;
-        mouse_report.v = -mouse_report.y;
-      } else {
-        // pimoroniBallHandling(mouse_reporqt, KC_UP, KC_DOWN, KC_LEFT, KC_RGHT);
-      }
       break; 
     default:
       break; 
   }
-
-  mouse_report.x = 0;
-  mouse_report.y = 0;
-  mouse_report.buttons = 0;
 
   return mouse_report;
 
@@ -378,7 +259,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,
     ctrlA,    KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     ctlSemi,
     shftZ,    KC_X,     lGuiC,    lAltV,    KC_B,                         KC_N,     rAltM,    guiComm,  KC_DOT,   shftSls,
-                                  NUMPADD,  KC_BSPC,  quotAlt,  entSymb,  spcSymb,  toggle 
+                                  NUMPADD,  KC_BSPC,  quotAlt,  entSymb,  spcSymb,  SYM 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
     KC_TAB, KC_W, HK_U, KC_R, KC_T,                  KC_Y, KC_U, KC_I,    KC_O,   KC_P,
@@ -402,7 +283,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PAST,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_SPC,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PENT,
-                                  _______,  KC_MPLY,  KC_MPLY,  KC_P0,    zeroSym,  KC_NUM    
+                                  _______,  KC_MPLY,  KC_MPLY,  KC_NUM,   KC_P0,    SYM    
   ),
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
