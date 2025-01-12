@@ -11,6 +11,47 @@
 
 void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo);
 
+//  layer controls
+#define BASE      TO(_BASE)
+#define ALT       MO(_ALTER)
+#define SYM       MO(_SYMBOLS)
+#define NUMPADD   MO(_NUM)
+#define HKGAMER   TO(_HOLLOW)
+#define MCGAMER   TO(_MINECRAFT)
+#define GAMEPAD   TO(_GAMEPAD)
+#define FIGHTER   TO(_FIGHTER)
+#define FISHING   TO(_FISH)
+#define GUITARR   TO(_GUITAR)
+#define POKEONE   TO(_POKEONE)
+#define POKETWO   TO(_POKETWO)
+
+//  mods
+#define ctrlA     LCTL_T(KC_A)
+#define shftZ     LSFT_T(KC_Z)
+#define lGuiC     LGUI_T(KC_C)
+#define lAltV     LALT_T(KC_V)
+#define ctlSemi   RCTL_T(KC_SCLN)
+#define shftSls   RSFT_T(KC_SLSH)
+#define guiComm   RGUI_T(KC_COMM)
+#define rAltM     RALT_T(KC_M)
+#define winLeft   S(G(KC_LEFT))
+#define winRght   S(G(KC_RGHT))
+
+//  thumbs
+#define spcSymb   LT(_SYMBOLS, KC_SPC)
+#define entSymb   LT(_SYMBOLS, KC_ENT)
+#define zeroSym   LT(_SYMBOLS, KC_P0)
+#define quotAlt   LT(_ALTER, KC_QUOT)
+
+//  gamer keys
+#define swpG      SH_T(KC_G)
+#define swpT      SH_T(KC_3)
+#define MS_3      MS_BTN3
+#define DROP      C(KC_Q)
+
+/*
+*   LAYER NAMES
+*/
 enum layers {
   _BASE = 0,
   _HOLLOW,
@@ -53,39 +94,6 @@ enum keycodes {
   toggle
 };
 
-#define ctrlA     LCTL_T(KC_A)
-#define shftZ     LSFT_T(KC_Z)
-#define lGuiC     LGUI_T(KC_C)
-#define lAltV     LALT_T(KC_V)
-#define ctlSemi   RCTL_T(KC_SCLN)
-#define shftSls   RSFT_T(KC_SLSH)
-#define guiComm   RGUI_T(KC_COMM)
-#define rAltM     RALT_T(KC_M)
-#define winLeft   S(G(KC_LEFT))
-#define winRght   S(G(KC_RGHT))
-
-#define swpG      SH_T(KC_G)
-#define swpT      SH_T(KC_3)
-#define MS_3      MS_BTN3
-#define DROP      C(KC_Q)
-
-#define spcSymb   LT(_SYMBOLS, KC_SPC)
-#define entSymb   LT(_SYMBOLS, KC_ENT)
-#define zeroSym   LT(_SYMBOLS, KC_P0)
-#define quotAlt   LT(_ALTER, KC_QUOT)
-
-#define BASE      TO(_BASE)
-#define ALT       MO(_ALTER)
-#define SYM       MO(_SYMBOLS)
-#define NUMPADD   MO(_NUM)
-#define HKGAMER   TO(_HOLLOW)
-#define MCGAMER   TO(_MINECRAFT)
-#define GAMEPAD   TO(_GAMEPAD)
-#define FIGHTER   TO(_FIGHTER)
-#define FISHING   TO(_FISH)
-#define GUITARR   TO(_GUITAR)
-#define POKEONE   TO(_POKEONE)
-#define POKETWO   TO(_POKETWO)
 
 bool scrollOrArrow = false;
 
@@ -98,9 +106,9 @@ uint8_t gameSOCD = 0;
 //  on startup
 void keyboard_post_init_user(void){
   combo_disable();
+  swap_hands_off();
   set_single_persistent_default_layer(_BASE);
   pimoroni_trackball_set_rgbw(40,20,40,40);
-  swap_hands_off();
 }
 
 //  on layer change
@@ -230,14 +238,14 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 }
 
 //  numpad override
-const key_override_t shiftPlusMinus = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PMNS);
-const key_override_t shiftMultDivid = ko_make_basic(MOD_MASK_SHIFT, KC_PAST, KC_PSLS);
-const key_override_t shiftEntrPriod = ko_make_basic(MOD_MASK_SHIFT, KC_PENT, KC_PDOT);
+const key_override_t shiftPlusMult = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PAST);
+const key_override_t shiftMinusDivide = ko_make_basic(MOD_MASK_SHIFT, KC_PMNS, KC_PSLS);
+const key_override_t shiftEnterPeriod = ko_make_basic(MOD_MASK_SHIFT, KC_PENT, KC_PDOT);
 
 const key_override_t *key_overrides[] = {
-    &shiftPlusMinus,
-    &shiftMultDivid,
-    &shiftEntrPriod
+    &shiftPlusMult,
+    &shiftMinusDivide,
+    &shiftEnterPeriod
 };
 
 //  mouse 
@@ -358,7 +366,9 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
 }
 
-//  layers
+/*
+*   LAYER 
+*/
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /*
@@ -399,7 +409,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   NUMPADD,  KC_BSPC,  KC_DEL,   _______,  _______,  _______
   ),
   [_NUM] = LAYOUT_split_3x5_3(
-    KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PAST,
+    KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PMNS,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_SPC,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PENT,
                                   _______,  KC_MPLY,  KC_MPLY,  KC_P0,    zeroSym,  KC_NUM    
@@ -491,14 +501,23 @@ const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 };
 
+//  simulatious opposing cardinal direction cleaning
+//  total state contains the info for two pairs of opposing cardinal directions
 void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
 
+  //  update state with desired bits
   if (on){
     *totalState |= bit;
   } else {
     *totalState &= ~bit;
   }
 
+  //  okay let's break this down, piece by piece
+  //  (highNibble << 2) will be 4 IFF we are dealing with the high nibble (pair two)
+  //  use the highnibble shenanigans to isolate the bits we are looking at. 
+  //  state is the current state of the pressed buttons
+  //  start is used to determin the new direction
+  //  after shifting over the bit, if it is greater than 0, then it is concerning the high nibble
   bool highNibble = bit >> 4;
 
   uint8_t state = (0x03 << (highNibble << 2)) & *totalState;

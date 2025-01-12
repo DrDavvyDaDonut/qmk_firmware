@@ -45,6 +45,7 @@ enum keycodes {
   AR_U,
 };
 
+//  mods
 #define ctrlA     LCTL_T(KC_A)
 #define shftZ     LSFT_T(KC_Z)
 #define lGuiC     LGUI_T(KC_C)
@@ -56,16 +57,20 @@ enum keycodes {
 #define winLeft   S(G(KC_LEFT))
 #define winRght   S(G(KC_RGHT))
 
+//  thumbs
+#define spcSymb   LT(_SYMBOLS, KC_SPC)
+#define entSymb   LT(_SYMBOLS, KC_ENT)
+#define zeroSym   LT(_SYMBOLS, KC_P0)
+#define quotAlt   LT(_ALTER, KC_QUOT)
+#define backNum   LT(_NUM, KC_BSPC)
+
+//  gamer
 #define swpG      SH_T(KC_G)
 #define swpT      SH_T(KC_3)
 #define MS_3      MS_BTN3
 #define DROP      C(KC_Q)
 
-#define spcSymb   LT(_SYMBOLS, KC_SPC)
-#define entSymb   LT(_SYMBOLS, KC_ENT)
-#define zeroSym   LT(_SYMBOLS, KC_P0)
-#define quotAlt   LT(_ALTER, KC_QUOT)
-
+//  layers
 #define BASE      TO(_BASE)
 #define ALT       MO(_ALTER)
 #define SYM       MO(_SYMBOLS)
@@ -225,15 +230,14 @@ const key_override_t *key_overrides[] = {
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
-
-  switch (highest_layer){
-    case _GAMEPAD:
-      break; 
-    case _BASE:
-      break; 
-    default:
-      break; 
-  }
+  // switch (highest_layer){
+  //   case _GAMEPAD:
+  //     break; 
+  //   case _BASE:
+  //     break; 
+  //   default:
+  //     break; 
+  // }
 
   return mouse_report;
 
@@ -259,7 +263,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,
     ctrlA,    KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     ctlSemi,
     shftZ,    KC_X,     lGuiC,    lAltV,    KC_B,                         KC_N,     rAltM,    guiComm,  KC_DOT,   shftSls,
-                                  NUMPADD,  KC_BSPC,  quotAlt,  entSymb,  spcSymb,  SYM 
+                                  NUMPADD,  backNum,  quotAlt,  entSymb,  spcSymb,  SYM 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
     KC_TAB, KC_W, HK_U, KC_R, KC_T,                  KC_Y, KC_U, KC_I,    KC_O,   KC_P,
@@ -277,13 +281,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
     KC_LCTL,  KC_LEFT,  KC_UP,    KC_DOWN,  KC_RGHT,                      KC_PGUP,  KC_MINS,  KC_EQL,   KC_LBRC,  KC_RBRC,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_PGDN,  KC_GRV,   KC_COMM,  KC_DOT,   KC_SLSH,
-                                  NUMPADD,  KC_BSPC,  KC_DEL,   _______,  _______,  _______
+                                  NUMPADD,  backNum,  KC_DEL,   _______,  _______,  _______
   ),
   [_NUM] = LAYOUT_split_3x5_3(
     KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PAST,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_SPC,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PENT,
-                                  _______,  KC_MPLY,  KC_MPLY,  KC_NUM,   KC_P0,    SYM    
+                                  _______,  KC_MPLY,  KC_MPLY,  KC_NUM,   zeroSym,  SYM    
   ),
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
