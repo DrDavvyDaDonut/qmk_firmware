@@ -9,45 +9,8 @@
   #include "print.h"
 #endif
 
+//  func dec
 void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo);
-
-//  layer controls
-#define BASE      TO(_BASE)
-#define ALT       MO(_ALTER)
-#define SYM       MO(_SYMBOLS)
-#define NUMPADD   MO(_NUM)
-#define HKGAMER   TO(_HOLLOW)
-#define MCGAMER   TO(_MINECRAFT)
-#define GAMEPAD   TO(_GAMEPAD)
-#define FIGHTER   TO(_FIGHTER)
-#define FISHING   TO(_FISH)
-#define GUITARR   TO(_GUITAR)
-#define POKEONE   TO(_POKEONE)
-#define POKETWO   TO(_POKETWO)
-
-//  mods
-#define ctrlA     LCTL_T(KC_A)
-#define shftZ     LSFT_T(KC_Z)
-#define lGuiC     LGUI_T(KC_C)
-#define lAltV     LALT_T(KC_V)
-#define ctlSemi   RCTL_T(KC_SCLN)
-#define shftSls   RSFT_T(KC_SLSH)
-#define guiComm   RGUI_T(KC_COMM)
-#define rAltM     RALT_T(KC_M)
-#define winLeft   S(G(KC_LEFT))
-#define winRght   S(G(KC_RGHT))
-
-//  thumbs
-#define spcSymb   LT(_SYMBOLS, KC_SPC)
-#define entSymb   LT(_SYMBOLS, KC_ENT)
-#define zeroSym   LT(_SYMBOLS, KC_P0)
-#define quotAlt   LT(_ALTER, KC_QUOT)
-
-//  gamer keys
-#define swpG      SH_T(KC_G)
-#define swpT      SH_T(KC_3)
-#define MS_3      MS_BTN3
-#define DROP      C(KC_Q)
 
 /*
 *   LAYER NAMES
@@ -94,6 +57,46 @@ enum keycodes {
   toggle
 };
 
+//  layer controls
+#define BASE      TO(_BASE)
+#define ALT       MO(_ALTER)
+#define SYM       MO(_SYMBOLS)
+#define NUMPADD   MO(_NUM)
+#define HKGAMER   TO(_HOLLOW)
+#define MCGAMER   TO(_MINECRAFT)
+#define GAMEPAD   TO(_GAMEPAD)
+#define FIGHTER   TO(_FIGHTER)
+#define FISHING   TO(_FISH)
+#define GUITARR   TO(_GUITAR)
+#define POKEONE   TO(_POKEONE)
+#define POKETWO   TO(_POKETWO)
+
+//  mods
+#define ctrlA     LCTL_T(KC_A)
+#define shftZ     LSFT_T(KC_Z)
+#define lGuiC     LGUI_T(KC_C)
+#define lAltV     LALT_T(KC_V)
+#define ctlSemi   RCTL_T(KC_SCLN)
+#define shftSls   RSFT_T(KC_SLSH)
+#define guiComm   RGUI_T(KC_COMM)
+#define rAltM     RALT_T(KC_M)
+#define winLeft   S(G(KC_LEFT))
+#define winRght   S(G(KC_RGHT))
+
+//  thumbs right
+#define spcSymb   LT(_SYMBOLS, KC_SPC)
+#define entSymb   LT(_SYMBOLS, KC_ENT)
+#define zeroSym   LT(_SYMBOLS, KC_P0)
+
+//  thumbs left
+#define backNum   LT(_NUM, KC_BSPC)
+#define quotAlt   LT(_ALTER, KC_QUOT)
+
+//  gamer keys
+#define swpG      SH_T(KC_G)
+#define swpT      SH_T(KC_3)
+#define MS_3      MS_BTN3
+#define DROP      C(KC_Q)
 
 bool scrollOrArrow = false;
 
@@ -113,7 +116,8 @@ void keyboard_post_init_user(void){
 
 //  on layer change
 layer_state_t layer_state_set_user(layer_state_t state) {
-  state = update_tri_layer_state(state, _SYMBOLS, _ALTER, _ADJUST);
+  //  no sir
+  // state = update_tri_layer_state(state, _SYMBOLS, _ALTER, _ADJUST);
   state = update_tri_layer_state(state, _SYMBOLS, _NUM, _ADJUST);
 
   highest_layer = get_highest_layer(state);
@@ -240,90 +244,18 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 //  numpad override
 const key_override_t shiftPlusMult = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PAST);
 const key_override_t shiftMinusDivide = ko_make_basic(MOD_MASK_SHIFT, KC_PMNS, KC_PSLS);
-const key_override_t shiftEnterPeriod = ko_make_basic(MOD_MASK_SHIFT, KC_PENT, KC_PDOT);
 
 const key_override_t *key_overrides[] = {
     &shiftPlusMult,
-    &shiftMinusDivide,
-    &shiftEnterPeriod
+    &shiftMinusDivide
 };
 
 //  mouse 
-
-int8_t x = 0;
-int8_t y = 0;
-uint8_t count = 0;
-
 uint8_t currButton = 0;
 uint8_t prevButton = 0;
-
-uint16_t pimoroniThreshold = 1;
-uint16_t pimoroniCountThreshold = 50;
-
-void sendCodes(uint8_t up, uint8_t down, uint8_t left, uint8_t right){
-  unregister_code(left);
-  unregister_code(right);
-  unregister_code(down);
-  unregister_code(up);
-
-  //  count on bit only
-  if (count & 0x80){
-    if (x > pimoroniThreshold){
-      register_code(right);
-    } else if (x < -pimoroniThreshold){
-      register_code(left);
-    }
-    if (y > pimoroniThreshold){
-      register_code(down);
-    } else if (y < -pimoroniThreshold){
-      register_code(up);
-    }
-  }
-}
-
-void pimoroniBallHandling(report_mouse_t mouse_report, uint8_t up, uint8_t down, uint8_t left, uint8_t right){
-  
-  //  ball move
-
-  if (mouse_report.x){
-    count |= 0x80;      //  turn on counting bit
-    if (mouse_report.x > 0){
-      x++;
-    } else {
-      x--;
-    }
-  }
-  
-  if (mouse_report.y){
-    count |= 0x80;      //  turn on counting bit
-    if (mouse_report.y > 0){
-      y++;
-    } else {
-      y--;
-    }
-  }
-
-  //  update count if either counting bits are on
-  if (count & 0xC0){
-    count++;
-  }
-  //  if cumulitive distance greater than threshold, update
-  if (x*x + y*y > pimoroniThreshold*pimoroniThreshold){
-    pimoroni_trackball_set_rgbw(255,255,255,255);
-    sendCodes(up, down, left, right);
-    count = 0x40;
-    x = 0;
-    y = 0;
-    return;
-  }
-  if ((count & 0x3f) > pimoroniCountThreshold){
-    pimoroni_trackball_set_rgbw(0,0,0,0);
-    sendCodes(up, down, left, right);
-    count = 0x40;
-    x = 0;
-    y = 0;
-  }
-}
+int8_t  xMouse = 0;
+int8_t  yMouse = 0;
+int8_t  threshold = 6;
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
@@ -332,6 +264,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
   //  activates on edge of presses
   if (prevButton != currButton){
+    //  press key 7,2 (the thumb key)
     action_exec(MAKE_KEYEVENT(7, 2, currButton));
 
     // only update if different
@@ -339,19 +272,31 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
   }
 
-  //  direction handling
-
-
   switch (highest_layer){
-    case _GAMEPAD:
-      // pimoroniBallHandling(mouse_report, KC_UP, KC_DOWN, KC_LEFT, KC_RGHT);
-      break; 
     case _BASE:
       if (scrollOrArrow){
         mouse_report.h = mouse_report.x;
         mouse_report.v = -mouse_report.y;
       } else {
-        // pimoroniBallHandling(mouse_reporqt, KC_UP, KC_DOWN, KC_LEFT, KC_RGHT);
+
+        xMouse += mouse_report.x;
+        yMouse += mouse_report.y;
+
+        if (xMouse > threshold){
+          tap_code(KC_RGHT);
+          xMouse -= threshold;
+        } else if (xMouse < -threshold){
+          tap_code(KC_LEFT);
+          xMouse += threshold;
+        }
+        if (yMouse > threshold){
+          tap_code(KC_DOWN);
+          yMouse -= threshold;
+        } else if (yMouse < -threshold){
+          tap_code(KC_UP);
+          yMouse += threshold;
+        }
+        
       }
       break; 
     default:
@@ -388,7 +333,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,
     ctrlA,    KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     ctlSemi,
     shftZ,    KC_X,     lGuiC,    lAltV,    KC_B,                         KC_N,     rAltM,    guiComm,  KC_DOT,   shftSls,
-                                  NUMPADD,  KC_BSPC,  quotAlt,  entSymb,  spcSymb,  toggle 
+                                  NUMPADD,  backNum,  quotAlt,  entSymb,  spcSymb,  toggle 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
     KC_TAB, KC_W, HK_U, KC_R, KC_T,                  KC_Y, KC_U, KC_I,    KC_O,   KC_P,
@@ -404,15 +349,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_SYMBOLS] = LAYOUT_split_3x5_3(
     KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
-    KC_LCTL,  KC_LEFT,  KC_UP,    KC_DOWN,  KC_RGHT,                      KC_PGUP,  KC_MINS,  KC_EQL,   KC_LBRC,  KC_RBRC,
+    KC_LCTL,  KC_SCLN,  _______,  _______,  _______,                      KC_PGUP,  KC_MINS,  KC_EQL,   KC_LBRC,  KC_RBRC,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_PGDN,  KC_GRV,   KC_COMM,  KC_DOT,   KC_SLSH,
-                                  NUMPADD,  KC_BSPC,  KC_DEL,   _______,  _______,  _______
+                                  NUMPADD,  backNum,  KC_DEL,   _______,  _______,  _______
   ),
   [_NUM] = LAYOUT_split_3x5_3(
     KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PMNS,
-    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_SPC,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PENT,
-                                  _______,  KC_MPLY,  KC_MPLY,  KC_P0,    zeroSym,  KC_NUM    
+    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_DOT,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_COMM,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PDOT,
+                                  _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  zeroSym,  KC_NUM    
   ),
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
@@ -503,6 +448,10 @@ const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
 
 //  simulatious opposing cardinal direction cleaning
 //  total state contains the info for two pairs of opposing cardinal directions
+//  {    high nibble   }{    low nibble    }
+//  [ 8 ][ 7 ][ 6 ][ 5 ][ 4 ][ 3 ][ 2 ][ 1 ]
+//  { start  }{ state  }{ start  }{ state  }
+//  bit is the bit being updated, will be an int with ONE bit active. Will always be in state.
 void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
 
   //  update state with desired bits
@@ -514,18 +463,23 @@ void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, ui
 
   //  okay let's break this down, piece by piece
   //  (highNibble << 2) will be 4 IFF we are dealing with the high nibble (pair two)
-  //  use the highnibble shenanigans to isolate the bits we are looking at. 
+  //  use the bitshift shenanigans to isolate the bits we are looking at. 
   //  state is the current state of the pressed buttons
   //  start is used to determin the new direction
   //  after shifting over the bit, if it is greater than 0, then it is concerning the high nibble
+  //  ...
+  //  what a silly way to write this
+  
   bool highNibble = bit >> 4;
 
-  uint8_t state = (0x03 << (highNibble << 2)) & *totalState;
-  uint8_t start = (0x0C << (highNibble << 2)) & *totalState;
+  uint8_t shift = highNibble << 2;
+  uint8_t state = (0x03 << shift) & *totalState;
+  uint8_t start = (0x0C << shift) & *totalState;
 
-  state >>= (highNibble << 2);
-  start >>= (highNibble << 2);
+  state >>= shift;
+  start >>= shift;
 
+  //  if they are not simultaneous
   if (state < 3){
     switch (state){
       case 1:
@@ -542,11 +496,12 @@ void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, ui
         break;
     }
 
-    *totalState &= ~(0x0C << (highNibble << 2));
-    *totalState |= ((state << 2) << (highNibble << 2));
+    *totalState &= ~(0x0C << shift);
+    *totalState |= ((state << 2) << shift);
     return;
   }
 
+  //  ACTUAL THINGS, BABY!!!
   switch (start) {
     case 4:
       unregister_code(keyOne);
