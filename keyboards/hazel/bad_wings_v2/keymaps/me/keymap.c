@@ -220,12 +220,10 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 //  numpad override
 const key_override_t shiftPlusMinus = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PMNS);
 const key_override_t shiftMultDivid = ko_make_basic(MOD_MASK_SHIFT, KC_PAST, KC_PSLS);
-const key_override_t shiftEntrPriod = ko_make_basic(MOD_MASK_SHIFT, KC_PENT, KC_PDOT);
 
 const key_override_t *key_overrides[] = {
     &shiftPlusMinus,
-    &shiftMultDivid,
-    &shiftEntrPriod
+    &shiftMultDivid
 };
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
@@ -284,10 +282,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   NUMPADD,  backNum,  KC_DEL,   _______,  _______,  _______
   ),
   [_NUM] = LAYOUT_split_3x5_3(
-    KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PAST,
-    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_SPC,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PENT,
-                                  _______,  KC_MPLY,  KC_MPLY,  KC_NUM,   zeroSym,  SYM    
+    KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PMNS,
+    KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_DOT,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_COMM,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PDOT,
+                                  _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  zeroSym,  KC_NUM    
   ),
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
@@ -297,8 +295,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
     KC_T,     swpG, UPUP, KC_B, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
-    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_F1,    
-    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
+    KC_SPC,   LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_F1,    
+    KC_LCTL,  KC_Z, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
                           KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_TAB, BASE 
   ),
   [_FISH] = LAYOUT_split_3x5_3(
@@ -315,8 +313,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
     KC_TAB,   swpT, KC_W, KC_4,   KC_5,               KC_8,   KC_7, KC_I,   KC_O, KC_P,    
-    KC_F5,    KC_A, KC_S, KC_D,   KC_6,               KC_9,   KC_J, KC_K,   KC_L, KC_F1,    
-    KC_LSFT,  KC_Z, KC_X, KC_E,   KC_Q,               DROP,   MS_3, KC_SPC, KC_1, KC_2,  
+    KC_LSFT,  KC_A, KC_S, KC_D,   KC_6,               KC_9,   KC_J, KC_K,   KC_L, KC_F1,    
+    KC_F5,    KC_Z, KC_X, KC_E,   KC_Q,               DROP,   MS_3, KC_SPC, KC_1, KC_2,  
                           KC_SPC, KC_1, KC_2, KC_ESC, KC_F3,  BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
@@ -376,22 +374,40 @@ const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 };
 
+//  simulatious opposing cardinal direction cleaning
+//  total state contains the info for two pairs of opposing cardinal directions
+//  {    high nibble   }{    low nibble    }
+//  [ 8 ][ 7 ][ 6 ][ 5 ][ 4 ][ 3 ][ 2 ][ 1 ]
+//  { start  }{ state  }{ start  }{ state  }
+//  bit is the bit being updated, will be an int with ONE bit active. Will always be in state.
 void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
 
+  //  update state with desired bits
   if (on){
     *totalState |= bit;
   } else {
     *totalState &= ~bit;
   }
 
+  //  okay let's break this down, piece by piece
+  //  (highNibble << 2) will be 4 IFF we are dealing with the high nibble (pair two)
+  //  use the bitshift shenanigans to isolate the bits we are looking at. 
+  //  state is the current state of the pressed buttons
+  //  start is used to determin the new direction
+  //  after shifting over the bit, if it is greater than 0, then it is concerning the high nibble
+  //  ...
+  //  what a silly way to write this
+  
   bool highNibble = bit >> 4;
 
-  uint8_t state = (0x03 << (highNibble << 2)) & *totalState;
-  uint8_t start = (0x0C << (highNibble << 2)) & *totalState;
+  uint8_t shift = highNibble << 2;
+  uint8_t state = (0x03 << shift) & *totalState;
+  uint8_t start = (0x0C << shift) & *totalState;
 
-  state >>= (highNibble << 2);
-  start >>= (highNibble << 2);
+  state >>= shift;
+  start >>= shift;
 
+  //  if they are not simultaneous
   if (state < 3){
     switch (state){
       case 1:
@@ -408,11 +424,12 @@ void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, ui
         break;
     }
 
-    *totalState &= ~(0x0C << (highNibble << 2));
-    *totalState |= ((state << 2) << (highNibble << 2));
+    *totalState &= ~(0x0C << shift);
+    *totalState |= ((state << 2) << shift);
     return;
   }
 
+  //  ACTUAL THINGS, BABY!!!
   switch (start) {
     case 4:
       unregister_code(keyOne);
