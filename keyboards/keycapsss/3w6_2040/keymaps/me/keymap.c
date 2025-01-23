@@ -100,6 +100,8 @@ enum keycodes {
 
 bool scrollOrArrow = false;
 
+bool suspended;
+
 uint8_t highest_layer = _BASE;
 
 uint8_t bllSpd = 1;
@@ -108,16 +110,22 @@ uint8_t gameSOCD = 0;
 
 //  on startup
 void keyboard_post_init_user(void){
+  suspended = false;
   combo_disable();
   swap_hands_off();
   set_single_persistent_default_layer(_BASE);
-  pimoroni_trackball_set_rgbw(40,20,40,40);
+  //  effect both leds
+  rgblight_set_effect_range(0, 2);  
+  rgblight_reload_from_eeprom();
+}
+
+void suspend_power_down_user(void) {
+  suspended = true;
+  gpio_write_pin_low(GP17);
 }
 
 //  on layer change
 layer_state_t layer_state_set_user(layer_state_t state) {
-  //  no sir
-  // state = update_tri_layer_state(state, _SYMBOLS, _ALTER, _ADJUST);
   state = update_tri_layer_state(state, _SYMBOLS, _NUM, _ADJUST);
 
   highest_layer = get_highest_layer(state);
@@ -134,10 +142,38 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     combo_disable();
   }
 
+  if (layer_state_cmp(state, _GAMEPAD)){
+    rgblight_sethsv(240, 232, 200);
+  } else
+  if (layer_state_cmp(state, _BASE)){
+    rgblight_sethsv(152, 232, 200);
+  }
+
   return state;
 }
 
+bool led_update_user(led_t led_state) {
+  if (!suspended){
+    gpio_write_pin(GP17, !led_state.num_lock);
+  }
+  return false;
+}
+
 //  process keycode
+/*
+record structure
+
+keyrecord_t record {
+  keyevent_t event {
+    keypos_t key {
+      uint8_t col
+      uint8_t row
+    }
+    bool     pressed
+    uint16_t time
+  }
+}
+*/
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case SOCD_ML:
