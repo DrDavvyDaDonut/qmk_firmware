@@ -21,7 +21,7 @@ enum layers {
   _ALTER,
   _SYMBOLS,
   _NUM,
-  _ADJUST,
+  _FUNC,
   _GAMEPAD,
   _FISH,
   _GUITAR,
@@ -30,6 +30,9 @@ enum layers {
   _POKEONE,
   _POKETWO
 };
+
+layer_state_t red_game_layers = (layer_state_t) (1 << _GAMEPAD) | (1 << _FIGHTER);
+layer_state_t green_game_layers = (layer_state_t) (1 << _FISH) | (1 << _GUITAR) | (1 << _MINECRAFT);
 
 enum keycodes {
   //  socd cleaning
@@ -126,7 +129,7 @@ void suspend_power_down_user(void) {
 
 //  on layer change
 layer_state_t layer_state_set_user(layer_state_t state) {
-  state = update_tri_layer_state(state, _SYMBOLS, _NUM, _ADJUST);
+  state = update_tri_layer_state(state, _SYMBOLS, _NUM, _FUNC);
 
   highest_layer = get_highest_layer(state);
 
@@ -136,17 +139,32 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     unregister_mods(MOD_LALT);
   }
 
-  if (layer_state_cmp(state, _ADJUST)){
+  if (layer_state_cmp(state, _FUNC)){
     combo_enable();
   } else {
     combo_disable();
   }
 
-  if (layer_state_cmp(state, _GAMEPAD)){
-    rgblight_sethsv(240, 232, 200);
+  if (layer_state_cmp(state, _HOLLOW)){
+    rgblight_sethsv(149, 57, 217);
   } else
-  if (layer_state_cmp(state, _BASE)){
+  if (state & red_game_layers){       //  red gaming layers 
+    rgblight_sethsv(0, 210, 176);
+  } else
+  if (state & ((layer_state_t) 1 << _POKEONE)){
+    rgblight_sethsv(15, 230, 195);
+  } else 
+  if (state & ((layer_state_t) 1 << _POKETWO)){
+    rgblight_sethsv(32, 246, 143);
+  } else
+  if (state & green_game_layers){     //  green gaming layers
+    rgblight_sethsv(82, 194, 133);
+  } else
+  if (state & 1){                     //  base layer active
     rgblight_sethsv(152, 232, 200);
+  } else
+  {                                   //  default
+    rgblight_sethsv(152, 232, 75);
   }
 
   return state;
@@ -395,7 +413,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_COMM,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PDOT,
                                   _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  zeroSym,  KC_NUM    
   ),
-  [_ADJUST] = LAYOUT_split_3x5_3(
+  [_FUNC] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
     KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  _______,  _______,  _______,  KC_BTN2,
