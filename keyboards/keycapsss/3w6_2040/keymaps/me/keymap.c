@@ -163,7 +163,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   if (state & 1){                     //  base layer active
     rgblight_sethsv(152, 232, 200);
   } else
-  {                                   //  default
+  {                                   //  default (sad)
     rgblight_sethsv(152, 232, 75);
   }
 
