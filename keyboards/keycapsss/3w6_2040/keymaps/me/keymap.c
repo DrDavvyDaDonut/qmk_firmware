@@ -5,12 +5,10 @@
 
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
+#include "socd.c"
 #ifdef CONSOLE_ENABLE
   #include "print.h"
 #endif
-
-//  func dec
-void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo);
 
 /*
 *   LAYER NAMES
@@ -101,7 +99,7 @@ enum keycodes {
 #define MS_3      MS_BTN3
 #define DROP      C(KC_Q)
 
-bool scrollOrArrow = false;
+bool scrollOrMouse = false;
 
 bool suspended;
 
@@ -122,9 +120,16 @@ void keyboard_post_init_user(void){
   rgblight_reload_from_eeprom();
 }
 
+//  keyboard power down
 void suspend_power_down_user(void) {
   suspended = true;
   gpio_write_pin_low(GP17);
+}
+
+//  keyboard power up
+void suspend_wakeup_init_user(void) {
+  suspended = false;
+  scrollOrMouse = false;
 }
 
 //  on layer change
@@ -260,7 +265,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       break;
     case toggle:
       if (record->event.pressed){
-        scrollOrArrow = ! scrollOrArrow;
+        if (record->tap.count){
+          tap_code(MS_BTN1);
+          tap_code(KC_SPC);
+        } else {
+          scrollOrMouse = ! scrollOrMouse;
+        }
       }
       return false;
       break;
@@ -269,6 +279,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       break;
     }
   return true;
+}
+
+//  no permissive hold for num pad
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case zeroSym:
+      // Immediately select the hold action when another key is tapped.
+      return false;
+    default:
+      // Do not select the hold action when another key is tapped.
+      return true;
+  }
 }
 
 //  custom timing for shift
@@ -307,9 +329,10 @@ const key_override_t *key_overrides[] = {
 //  mouse 
 uint8_t currButton = 0;
 uint8_t prevButton = 0;
-int8_t  xMouse = 0;
-int8_t  yMouse = 0;
-int8_t  threshold = 6;
+
+float scroll_h = 0;
+float scroll_v = 0;
+float multiplier = .6;
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
@@ -328,29 +351,18 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
   switch (highest_layer){
     case _BASE:
-      if (scrollOrArrow){
-        mouse_report.h = mouse_report.x;
-        mouse_report.v = -mouse_report.y;
+      if (scrollOrMouse){
+        scroll_h = mouse_report.x  / multiplier;
+        scroll_v = -mouse_report.y / multiplier;
+
+        mouse_report.h += (int8_t) scroll_h;
+        mouse_report.v += (int8_t) scroll_v;
+
+        scroll_h -= mouse_report.h;
+        scroll_v -= mouse_report.v;
       } else {
-
-        xMouse += mouse_report.x;
-        yMouse += mouse_report.y;
-
-        if (xMouse > threshold){
-          tap_code(KC_RGHT);
-          xMouse -= threshold;
-        } else if (xMouse < -threshold){
-          tap_code(KC_LEFT);
-          xMouse += threshold;
-        }
-        if (yMouse > threshold){
-          tap_code(KC_DOWN);
-          yMouse -= threshold;
-        } else if (yMouse < -threshold){
-          tap_code(KC_UP);
-          yMouse += threshold;
-        }
-        
+        mouse_report.buttons = 0;
+        return mouse_report;
       }
       break; 
     default:
@@ -393,7 +405,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB, KC_W, HK_U, KC_R, KC_T,                  KC_Y, KC_U, KC_I,    KC_O,   KC_P,
     KC_A,   HK_L, HK_D, HK_R, KC_G,                  KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
     KC_ESC, KC_X, KC_C, KC_V, KC_B,                  KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
-                     NUMPADD, KC_G, KC_LALT, KC_ESC, KC_SPC, BASE
+                     NUMPADD, KC_G, ALT,     KC_ESC, KC_SPC, BASE
   ),
   [_ALTER] = LAYOUT_split_3x5_3(
     KC_TAB,   XXXXXXX,  KC_UP,    FIGHTER,  HKGAMER,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
@@ -499,75 +511,3 @@ const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 };
-
-//  simulatious opposing cardinal direction cleaning
-//  total state contains the info for two pairs of opposing cardinal directions
-//  {    high nibble   }{    low nibble    }
-//  [ 8 ][ 7 ][ 6 ][ 5 ][ 4 ][ 3 ][ 2 ][ 1 ]
-//  { start  }{ state  }{ start  }{ state  }
-//  bit is the bit being updated, will be an int with ONE bit active. Will always be in state.
-void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
-
-  //  update state with desired bits
-  if (on){
-    *totalState |= bit;
-  } else {
-    *totalState &= ~bit;
-  }
-
-  //  okay let's break this down, piece by piece
-  //  (highNibble << 2) will be 4 IFF we are dealing with the high nibble (pair two)
-  //  use the bitshift shenanigans to isolate the bits we are looking at. 
-  //  state is the current state of the pressed buttons
-  //  start is used to determin the new direction
-  //  after shifting over the bit, if it is greater than 0, then it is concerning the high nibble
-  //  ...
-  //  what a silly way to write this
-  
-  bool highNibble = bit >> 4;
-
-  uint8_t shift = highNibble << 2;
-  uint8_t state = (0x03 << shift) & *totalState;
-  uint8_t start = (0x0C << shift) & *totalState;
-
-  state >>= shift;
-  start >>= shift;
-
-  //  if they are not simultaneous
-  if (state < 3){
-    switch (state){
-      case 1:
-        register_code(keyOne);
-        unregister_code(keyTwo);
-        break;
-      case 2:
-        unregister_code(keyOne);
-        register_code(keyTwo);
-        break;
-      default:
-        unregister_code(keyOne);
-        unregister_code(keyTwo);
-        break;
-    }
-
-    *totalState &= ~(0x0C << shift);
-    *totalState |= ((state << 2) << shift);
-    return;
-  }
-
-  //  ACTUAL THINGS, BABY!!!
-  switch (start) {
-    case 4:
-      unregister_code(keyOne);
-      register_code(keyTwo);
-      break;
-    case 8:
-      register_code(keyOne);
-      unregister_code(keyTwo);
-      break;
-    default:
-      unregister_code(keyOne);
-      unregister_code(keyTwo);
-      break;
-  }
-}

@@ -1,10 +1,10 @@
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
+#include "keymaps/me/socd.c"
+#include "keymaps/me/sticks.c"
 #ifdef CONSOLE_ENABLE
   #include "print.h"
 #endif
-
-void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo);
 
 enum layers {
   _BASE = 0,
@@ -45,31 +45,6 @@ enum keycodes {
   AR_U,
 };
 
-//  mods
-#define ctrlA     LCTL_T(KC_A)
-#define shftZ     LSFT_T(KC_Z)
-#define lGuiC     LGUI_T(KC_C)
-#define lAltV     LALT_T(KC_V)
-#define ctlSemi   RCTL_T(KC_SCLN)
-#define shftSls   RSFT_T(KC_SLSH)
-#define guiComm   RGUI_T(KC_COMM)
-#define rAltM     RALT_T(KC_M)
-#define winLeft   S(G(KC_LEFT))
-#define winRght   S(G(KC_RGHT))
-
-//  thumbs
-#define spcSymb   LT(_SYMBOLS, KC_SPC)
-#define entSymb   LT(_SYMBOLS, KC_ENT)
-#define zeroSym   LT(_SYMBOLS, KC_P0)
-#define quotAlt   LT(_ALTER, KC_QUOT)
-#define backNum   LT(_NUM, KC_BSPC)
-
-//  gamer
-#define swpG      SH_T(KC_G)
-#define swpT      SH_T(KC_3)
-#define MS_3      MS_BTN3
-#define DROP      C(KC_Q)
-
 //  layers
 #define BASE      TO(_BASE)
 #define ALT       MO(_ALTER)
@@ -83,6 +58,35 @@ enum keycodes {
 #define GUITARR   TO(_GUITAR)
 #define POKEONE   TO(_POKEONE)
 #define POKETWO   TO(_POKETWO)
+
+//  mods
+#define ctrlA     LCTL_T(KC_A)
+#define shftZ     LSFT_T(KC_Z)
+#define lGuiC     LGUI_T(KC_C)
+#define lAltV     LALT_T(KC_V)
+#define ctlSemi   RCTL_T(KC_SCLN)
+#define shftSls   RSFT_T(KC_SLSH)
+#define guiComm   RGUI_T(KC_COMM)
+#define rAltM     RALT_T(KC_M)
+#define winLeft   S(G(KC_LEFT))
+#define winRght   S(G(KC_RGHT))
+
+//  thumbs right
+#define spcSymb   LT(_SYMBOLS, KC_SPC)
+#define entSymb   LT(_SYMBOLS, KC_ENT)
+#define zeroSym   LT(_SYMBOLS, KC_P0)
+
+//  thumbs left
+#define backNum   LT(_NUM, KC_BSPC)
+#define quotAlt   LT(_ALTER, KC_QUOT)
+
+//  gamer
+#define swpG      SH_T(KC_G)
+#define swpT      SH_T(KC_3)
+#define MS_3      MS_BTN3
+#define DROP      C(KC_Q)
+
+
 
 uint8_t highest_layer = _BASE;
 
@@ -193,6 +197,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
+//  no permissive hold for num pad
+bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case zeroSym:
+      // Immediately select the hold action when another key is tapped.
+      return false;
+    default:
+      // Do not select the hold action when another key is tapped.
+      return true;
+  }
+}
+
 //  custom timing for shift
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
@@ -290,7 +306,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
     KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  _______,  _______,  _______,  KC_BTN2,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  QK_BOOT,  _______,  _______,  KC_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
@@ -374,74 +390,3 @@ const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 };
 
-//  simulatious opposing cardinal direction cleaning
-//  total state contains the info for two pairs of opposing cardinal directions
-//  {    high nibble   }{    low nibble    }
-//  [ 8 ][ 7 ][ 6 ][ 5 ][ 4 ][ 3 ][ 2 ][ 1 ]
-//  { start  }{ state  }{ start  }{ state  }
-//  bit is the bit being updated, will be an int with ONE bit active. Will always be in state.
-void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
-
-  //  update state with desired bits
-  if (on){
-    *totalState |= bit;
-  } else {
-    *totalState &= ~bit;
-  }
-
-  //  okay let's break this down, piece by piece
-  //  (highNibble << 2) will be 4 IFF we are dealing with the high nibble (pair two)
-  //  use the bitshift shenanigans to isolate the bits we are looking at. 
-  //  state is the current state of the pressed buttons
-  //  start is used to determin the new direction
-  //  after shifting over the bit, if it is greater than 0, then it is concerning the high nibble
-  //  ...
-  //  what a silly way to write this
-  
-  bool highNibble = bit >> 4;
-
-  uint8_t shift = highNibble << 2;
-  uint8_t state = (0x03 << shift) & *totalState;
-  uint8_t start = (0x0C << shift) & *totalState;
-
-  state >>= shift;
-  start >>= shift;
-
-  //  if they are not simultaneous
-  if (state < 3){
-    switch (state){
-      case 1:
-        register_code(keyOne);
-        unregister_code(keyTwo);
-        break;
-      case 2:
-        unregister_code(keyOne);
-        register_code(keyTwo);
-        break;
-      default:
-        unregister_code(keyOne);
-        unregister_code(keyTwo);
-        break;
-    }
-
-    *totalState &= ~(0x0C << shift);
-    *totalState |= ((state << 2) << shift);
-    return;
-  }
-
-  //  ACTUAL THINGS, BABY!!!
-  switch (start) {
-    case 4:
-      unregister_code(keyOne);
-      register_code(keyTwo);
-      break;
-    case 8:
-      register_code(keyOne);
-      unregister_code(keyTwo);
-      break;
-    default:
-      unregister_code(keyOne);
-      unregister_code(keyTwo);
-      break;
-  }
-}
