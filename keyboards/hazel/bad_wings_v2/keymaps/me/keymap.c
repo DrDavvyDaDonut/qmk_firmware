@@ -1,7 +1,5 @@
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
-#include "keymaps/me/socd.c"
-#include "keymaps/me/sticks.c"
 #ifdef CONSOLE_ENABLE
   #include "print.h"
 #endif
@@ -23,26 +21,7 @@ enum layers {
 };
 
 enum keycodes {
-  //  socd cleaning
-  SOCD_ML = SAFE_RANGE,
-  SOCD_MR,
-  SOCD_MU,
-  SOCD_MD,
-
-  HK_L,
-  HK_R,
-  HK_U,
-  HK_D,
-
-  LEFT,
-  RGHT,
-  UPUP,
-  DOWN,
-
-  AR_D,
-  AR_L,
-  AR_R,
-  AR_U,
+  TESTEST = USER_RANGE_END
 };
 
 //  layers
@@ -91,8 +70,6 @@ enum keycodes {
 uint8_t highest_layer = _BASE;
 
 uint8_t bllSpd = 1;
-uint8_t mouseSOCD = 0;
-uint8_t gameSOCD = 0;
 
 //  on startup
 void keyboard_post_init_user(void){
@@ -125,69 +102,15 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 //  process keycode
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  bool proceed = process_record_user_me(keycode, record);
+
+  if (!proceed){
+    return false;
+  }
+  
   switch (keycode) {
-    case SOCD_ML:
-      socdCleaner(&mouseSOCD, 0x01, record->event.pressed, KC_MS_L, KC_MS_R);
-      return false;
-      break;
-    case SOCD_MR:
-      socdCleaner(&mouseSOCD, 0x02, record->event.pressed, KC_MS_L, KC_MS_R);
-      return false;
-      break;
-    case SOCD_MU:
-      socdCleaner(&mouseSOCD, 0x10, record->event.pressed, KC_MS_U, KC_MS_D);
-      return false;
-      break;
-    case SOCD_MD:
-      socdCleaner(&mouseSOCD, 0x20, record->event.pressed, KC_MS_U, KC_MS_D);
-      return false;
-      break;
-    case HK_L:
-      socdCleaner(&gameSOCD, 0x01, record->event.pressed, KC_S, KC_F);
-      return false;
-      break;
-    case HK_R:
-      socdCleaner(&gameSOCD, 0x02, record->event.pressed, KC_S, KC_F);
-      return false;
-      break;
-    case HK_U:
-      socdCleaner(&gameSOCD, 0x10, record->event.pressed, KC_E, KC_D);
-      return false;
-      break;
-    case HK_D:
-      socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_E, KC_D);
-      return false;
-      break;
-    case LEFT:
-      socdCleaner(&gameSOCD, 0x01, record->event.pressed, KC_A, KC_D);
-      return false;
-      break;
-    case RGHT:
-      socdCleaner(&gameSOCD, 0x02, record->event.pressed, KC_A, KC_D);
-      return false;
-      break;
-    case UPUP:
-      socdCleaner(&gameSOCD, 0x10, record->event.pressed, KC_W, KC_S);
-      return false;
-      break;
-    case DOWN:
-      socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_W, KC_S);
-      return false;
-      break;
-    case AR_L:
-      socdCleaner(&gameSOCD, 0x01, record->event.pressed, KC_LEFT, KC_RGHT);
-      return false;
-      break;
-    case AR_R:
-      socdCleaner(&gameSOCD, 0x02, record->event.pressed, KC_LEFT, KC_RGHT);
-      return false;
-      break;
-    case AR_U:
-      socdCleaner(&gameSOCD, 0x10, record->event.pressed, KC_UP, KC_DOWN);
-      return false;
-      break;
-    case AR_D:
-      socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_UP, KC_DOWN);
+    case TESTEST:
+      SEND_STRING("FUCK");
       return false;
       break;
     default:
@@ -306,7 +229,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ADJUST] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
     KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  QK_BOOT,  _______,  _______,  KC_BTN2,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  QK_BOOT,  TESTEST,  _______,  KC_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(

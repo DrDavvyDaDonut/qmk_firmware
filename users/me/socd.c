@@ -1,3 +1,9 @@
+#include "socd.h"
+
+//  code processing
+uint8_t mouseSOCD = 0;
+uint8_t gameSOCD = 0;
+
 //  simulatious opposing cardinal direction cleaning
 //  total state contains the info for two pairs of opposing cardinal directions
 //  {    high nibble   }{    low nibble    }

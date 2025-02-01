@@ -5,7 +5,6 @@
 
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
-#include "socd.c"
 #ifdef CONSOLE_ENABLE
   #include "print.h"
 #endif
@@ -34,21 +33,25 @@ layer_state_t green_game_layers = (layer_state_t) (1 << _FISH) | (1 << _GUITAR) 
 
 enum keycodes {
   //  socd cleaning
+  //  mouse
   SOCD_ML = SAFE_RANGE,
   SOCD_MR,
   SOCD_MU,
   SOCD_MD,
 
+  //  hollow knight
   HK_L,
   HK_R,
   HK_U,
   HK_D,
 
+  //  wasd
   LEFT,
   RGHT,
   UPUP,
   DOWN,
 
+  //  arrows
   AR_D,
   AR_L,
   AR_R,

@@ -4,7 +4,6 @@ POINTING_DEVICE_ENABLE = yes
 
 # combos 
 VPATH  +=  keyboards/gboards
-VPATH  +=  keyboards/keycapsss/3w6_2040
 COMBO_ENABLE = yes
 
 # mouse
