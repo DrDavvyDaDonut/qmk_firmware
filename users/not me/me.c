@@ -1,5 +1,9 @@
 #include "me.h"
 
+//  code processing
+uint8_t mouseSOCD = 0;
+uint8_t gameSOCD = 0;
+
 bool process_record_user_me(uint16_t keycode, keyrecord_t *record) {
 
   switch (keycode){
@@ -72,19 +76,19 @@ bool process_record_user_me(uint16_t keycode, keyrecord_t *record) {
     #ifdef JOYSTICK_ENABLE
 
     case LS_RGHT:
-      
+      updateLeftStick(keycode, record->event.pressed);
       return false;
       break;
     case LS_LEFT:
-      
+      updateLeftStick(keycode, record->event.pressed);
       return false;
       break;
     case LS_UPUP:
-      
+      updateLeftStick(keycode, record->event.pressed);
       return false;
       break;  
     case LS_DOWN:
-      
+      updateLeftStick(keycode, record->event.pressed);
       return false;
       break;
     case RS_RGHT:

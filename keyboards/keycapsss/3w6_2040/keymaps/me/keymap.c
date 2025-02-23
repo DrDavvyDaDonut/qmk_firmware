@@ -5,6 +5,7 @@
 
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
+#include "socd.c"
 #ifdef CONSOLE_ENABLE
   #include "print.h"
 #endif
@@ -406,15 +407,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
     KC_TAB, KC_W, HK_U, KC_R, KC_T,                  KC_Y, KC_U, KC_I,    KC_O,   KC_P,
-    KC_A,   HK_L, HK_D, HK_R, KC_G,                  KC_H, KC_J, KC_K,    KC_L,   KC_SCLN,
+    KC_A,   HK_L, HK_D, HK_R, KC_G,                  KC_H, KC_J, KC_K,    KC_L,   KC_SPC,
     KC_ESC, KC_X, KC_C, KC_V, KC_B,                  KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
-                     NUMPADD, KC_G, ALT,     KC_ESC, KC_SPC, BASE
+                     NUMPADD, KC_SPC, ALT,   KC_ESC, KC_G, BASE
   ),
   [_ALTER] = LAYOUT_split_3x5_3(
     KC_TAB,   XXXXXXX,  KC_UP,    FIGHTER,  HKGAMER,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  GAMEPAD,                      XXXXXXX,  KC_MPRV,  KC_VOLD,  KC_MNXT,  XXXXXXX,
-    KC_LSFT,  XXXXXXX,  KC_LGUI,  GUITARR,  MCGAMER,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
-                                  _______,  _______,  _______,  SYM,      KC_MPLY,  _______
+    KC_LSFT,  KC_ESC,   KC_LGUI,  GUITARR,  MCGAMER,                      XXXXXXX,  XXXXXXX,  KC_MUTE,  XXXXXXX,  XXXXXXX,
+                                  _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_SYMBOLS] = LAYOUT_split_3x5_3(
     KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,

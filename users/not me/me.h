@@ -2,6 +2,8 @@
 #define USERSPACE
 
 #include "quantum.h"
+#include "socd.c"
+#include "sticks.c"
 
 enum keycodes {
   //  socd codes
