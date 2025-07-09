@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# BAD WINGS V2 RAAAAA
-=======
 # Bad Wings v2
 
 ![Bad Wings v2](https://i.imgur.com/8uCHotK.jpeg)
@@ -28,4 +25,3 @@ Enter the bootloader in 3 ways:
 * **Bootmagic reset**: Hold down the top-left key and plug in the keyboard
 * **Physical reset button**: Briefly press the button on the back of the PCB
 * **Keycode in layout**: Press the key mapped to `QK_BOOT` if it is available
->>>>>>> c3b3f097022f3472e9fc7b4442803032b93c21e0
