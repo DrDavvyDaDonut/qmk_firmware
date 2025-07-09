@@ -16,10 +16,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+<<<<<<< HEAD:users/not me/readme.md
 #define AUDIO_VOICES
 #define AUDIO_PIN C6
 
 #define AUDIO_INIT_DELAY
+=======
+#define USE_I2C
+#define SCL_CLOCK  800000UL
+
+//#define DEBUG_MATRIX_SCAN_RATE //Use this to determine scan-rate.
+
+#ifdef AUDIO_ENABLE
+  #define AUDIO_PIN C6
+  #define STARTUP_SONG SONG(STARTUP_SOUND)
+  #define NO_MUSIC_MODE
+  #define TONE_QWERTY SONG(Q__NOTE(_E4));
+  #define TONE_NUMPAD SONG(Q__NOTE(_D4));
+#endif
+>>>>>>> c3b3f097022f3472e9fc7b4442803032b93c21e0:keyboards/handwired/xealous/rev1/config.h
 
 /*
  * Feature disable options

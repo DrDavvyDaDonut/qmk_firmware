@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 <<<<<<< HEAD:keyboards/gboards/gergoplex/keymaps/georgepetri/config.h
+<<<<<<< HEAD:keyboards/gboards/gergoplex/keymaps/georgepetri/config.h
 #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
 
 #undef DEBOUNCE
@@ -35,3 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define FORCE_NKRO
 >>>>>>> a12ff287eed88d928430b63f4f7faff3b6fb5ebc:keyboards/adkb96/keymaps/default/config.h
+=======
+#define SPLIT_POINTING_ENABLE
+#define POINTING_DEVICE_TASK_THROTTLE_MS 1
+
+#define SPLIT_TRANSACTION_IDS_KB RPC_ID_KB_CONFIG_SYNC
+>>>>>>> c3b3f097022f3472e9fc7b4442803032b93c21e0:keyboards/handwired/tractyl_manuform/config.h

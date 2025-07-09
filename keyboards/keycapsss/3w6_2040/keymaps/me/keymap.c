@@ -268,14 +268,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       return false;
       break;
     case toggle:
-      if (record->event.pressed){
-        if (record->tap.count){
-          tap_code(MS_BTN1);
-          tap_code(KC_SPC);
-        } else {
-          scrollOrMouse = ! scrollOrMouse;
-        }
-      }
+      // if (record->event.pressed){
+      //   if (record->tap.count){
+      //     tap_code(MS_BTN1);
+      //     tap_code(KC_SPC);
+      //   } else {
+      //     scrollOrMouse = ! scrollOrMouse;
+      //   }
+      // }
+      unregister_code(KC_SCLN);
       return false;
       break;
     default:
@@ -324,10 +325,12 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 //  numpad override
 const key_override_t shiftPlusMult = ko_make_basic(MOD_MASK_SHIFT, KC_PPLS, KC_PAST);
 const key_override_t shiftMinusDivide = ko_make_basic(MOD_MASK_SHIFT, KC_PMNS, KC_PSLS);
+const key_override_t shiftDotNumlock = ko_make_basic(MOD_MASK_SHIFT, KC_PDOT, KC_NUM);
 
 const key_override_t *key_overrides[] = {
     &shiftPlusMult,
-    &shiftMinusDivide
+    &shiftMinusDivide,
+    &shiftDotNumlock
 };
 
 //  mouse 
@@ -353,25 +356,25 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
   }
 
-  switch (highest_layer){
-    case _BASE:
-      if (scrollOrMouse){
-        scroll_h = mouse_report.x  / multiplier;
-        scroll_v = -mouse_report.y / multiplier;
+  // switch (highest_layer){
+  //   case _BASE:
+  //     if (scrollOrMouse){
+  //       scroll_h = mouse_report.x  / multiplier;
+  //       scroll_v = -mouse_report.y / multiplier;
 
-        mouse_report.h += (int8_t) scroll_h;
-        mouse_report.v += (int8_t) scroll_v;
+  //       mouse_report.h += (int8_t) scroll_h;
+  //       mouse_report.v += (int8_t) scroll_v;
 
-        scroll_h -= mouse_report.h;
-        scroll_v -= mouse_report.v;
-      } else {
-        mouse_report.buttons = 0;
-        return mouse_report;
-      }
-      break; 
-    default:
-      break; 
-  }
+  //       scroll_h -= mouse_report.h;
+  //       scroll_v -= mouse_report.v;
+  //     } else {
+  //       mouse_report.buttons = 0;
+  //       return mouse_report;
+  //     }
+  //     break; 
+  //   default:
+  //     break; 
+  // }
 
   mouse_report.x = 0;
   mouse_report.y = 0;
@@ -406,10 +409,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   NUMPADD,  backNum,  quotAlt,  entSymb,  spcSymb,  toggle 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
-    KC_TAB, KC_W, HK_U, KC_R, KC_T,                  KC_Y, KC_U, KC_I,    KC_O,   KC_P,
-    KC_A,   HK_L, HK_D, HK_R, KC_G,                  KC_H, KC_J, KC_K,    KC_L,   KC_SPC,
-    KC_ESC, KC_X, KC_C, KC_V, KC_B,                  KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH,
-                     NUMPADD, KC_SPC, ALT,   KC_ESC, KC_G, BASE
+    KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   KC_P,
+    KC_A,   HK_L, HK_D, HK_R, KC_SPC,             KC_H, KC_J,    KC_K,    KC_L,   KC_SCLN,
+    KC_ESC, KC_X, KC_C, KC_V, KC_B,               KC_N, KC_SCLN, KC_SCLN, KC_SCLN, KC_SCLN,
+                     NUMPADD, HK_U, ALT,  KC_ESC, KC_SPC, BASE
   ),
   [_ALTER] = LAYOUT_split_3x5_3(
     KC_TAB,   XXXXXXX,  KC_UP,    FIGHTER,  HKGAMER,                      XXXXXXX,  XXXXXXX,  KC_VOLU,  XXXXXXX,  XXXXXXX,

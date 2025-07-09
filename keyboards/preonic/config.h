@@ -20,10 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define AUDIO_VOICES
 #define AUDIO_PIN C6
 
+<<<<<<< HEAD
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 #define LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
 #define LOCKING_RESYNC_ENABLE
+=======
+#define AUDIO_INIT_DELAY
+>>>>>>> c3b3f097022f3472e9fc7b4442803032b93c21e0
 
 /*
  * Feature disable options
