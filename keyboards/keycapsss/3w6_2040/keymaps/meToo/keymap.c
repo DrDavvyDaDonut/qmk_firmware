@@ -86,12 +86,13 @@ enum keycodes {
 #define winRght   S(G(KC_RGHT))
 
 //  thumbs right
-#define spcSymb   LT(_SYMBOLS, KC_SPC)
-#define entSymb   LT(_SYMBOLS, KC_ENT)
-#define zeroSym   LT(_SYMBOLS, KC_P0)
+// #define spcSymb   LT(_SYMBOLS, KC_SPC)
+// #define entSymb   LT(_SYMBOLS, KC_ENT)
+// #define zeroSym   LT(_SYMBOLS, KC_P0)
+#define nmLkSym   LT(_SYMBOLS, KC_NUM)
 
 //  thumbs left
-#define backNum   LT(_NUM, KC_BSPC)
+// #define backNum   LT(_NUM, KC_BSPC)
 #define quotAlt   LT(_ALTER, KC_QUOT)
 
 //  gamer keys
@@ -271,18 +272,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-//  no permissive hold for num pad
-bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case zeroSym:
-      // Immediately select the hold action when another key is tapped.
-      return false;
-    default:
-      // Do not select the hold action when another key is tapped.
-      return true;
-  }
-}
-
 //  custom timing for shift
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
@@ -297,14 +286,22 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
   }
 }
 
-//  quick raise after space
-uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case spcSymb:
-      return 0;
-    default:
-      return QUICK_TAP_TERM;
-  }
+//  flow tap NO Z (shift)
+
+bool is_flow_tap_key(uint16_t keycode) {
+    if ((get_mods() & (MOD_MASK_CG | MOD_BIT_LALT)) != 0) {
+        return false; // Disable Flow Tap on hotkeys.
+    }
+    switch (get_tap_keycode(keycode)) {
+        case KC_SPC:
+        case KC_A ... KC_Y:
+        case KC_DOT:
+        case KC_COMM:
+        case KC_SCLN:
+        case KC_SLSH:
+            return true;
+    }
+    return false;
 }
 
 //  numpad override
@@ -340,7 +337,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,
     ctrlA,    KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     ctlSemi,
     shftZ,    KC_X,     lGuiC,    lAltV,    KC_B,                         KC_N,     rAltM,    guiComm,  KC_DOT,   shftSls,
-                                  NUMPADD,  backNum,  quotAlt,  entSymb,  spcSymb,  SYM 
+                                  NUMPADD,  KC_BSPC,  quotAlt,  KC_ENT,   KC_SPC,   SYM 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
     KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   KC_P,
@@ -358,13 +355,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                         KC_6,     KC_7,     KC_8,     KC_9,     KC_0,
     KC_LCTL,  KC_SCLN,  _______,  _______,  _______,                      KC_PGUP,  KC_MINS,  KC_EQL,   KC_LBRC,  KC_RBRC,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_BSLS,                      KC_PGDN,  KC_GRV,   KC_COMM,  KC_DOT,   KC_SLSH,
-                                  NUMPADD,  backNum,  KC_DEL,   _______,  _______,  _______
+                                  NUMPADD,  KC_BSPC,  KC_DEL,   _______,  _______,  _______
   ),
   [_NUM] = LAYOUT_split_3x5_3(
     KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PMNS,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_DOT,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_COMM,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PDOT,
-                                  _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  zeroSym,  KC_NUM    
+                                  _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  KC_P0,  nmLkSym    
   ),
   [_FUNC] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
