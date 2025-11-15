@@ -1,8 +1,9 @@
 # ignore the keyboards
-keyboards/**
+/keyboards/**
 
 # but keep the ones i want
-!keyboards/keycapsss/**
+!/keyboards/keycapsss/**
+!/keyboards/gboards/**
 
 # Junk files
 *.bak
