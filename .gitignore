@@ -1,3 +1,9 @@
+# ignore the keyboards
+/keyboards/**
+
+# but keep the ones i want
+!/keyboards/keycapsss/**
+
 # Junk files
 *.bak
 *.swp
