@@ -6,10 +6,6 @@
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
 #include "socd.c"
-#ifdef CONSOLE_ENABLE
-  #include "print.h"
-#endif
-
 /*
 *   LAYER NAMES
 */
@@ -290,16 +286,16 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 
 bool is_flow_tap_key(uint16_t keycode) {
     if ((get_mods() & (MOD_MASK_CG | MOD_BIT_LALT)) != 0) {
-        return false; // Disable Flow Tap on hotkeys.
+      return false; // Disable Flow Tap on hotkeys.
     }
     switch (get_tap_keycode(keycode)) {
-        case KC_SPC:
-        case KC_A ... KC_Y:
-        case KC_DOT:
-        case KC_COMM:
-        case KC_SCLN:
-        case KC_SLSH:
-            return true;
+      case KC_SPC:
+      case KC_B ... KC_Y:
+      case KC_DOT:
+      case KC_COMM:
+      case KC_SCLN:
+      case KC_SLSH:
+        return true;
     }
     return false;
 }
@@ -365,7 +361,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [_FUNC] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
-    KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
+    KC_LCTL,  KC_CAPS,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  _______,  _______,  _______,  KC_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),

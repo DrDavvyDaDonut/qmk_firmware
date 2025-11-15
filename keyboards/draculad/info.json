@@ -52,8 +52,25 @@
             "pin": "D2"
         }
     },
+<<<<<<< HEAD:keyboards/draculad/info.json
     "processor": "atmega32u4",
     "bootloader": "caterina",
+=======
+    "development_board": "promicro",
+    "features": {
+        "bootmagic": false,
+        "mousekey": true,
+        "extrakey": true,
+        "nkro": true,
+        "rgblight": true,
+        "oled": true,
+        "wpm": true,
+        "encoder": true
+    },
+    "build": {
+        "lto": true
+    },
+>>>>>>> ed343ddad4832a0a48c8ad794e949a595dcf3cfb:keyboards/draculad/keyboard.json
     "layouts": {
         "LAYOUT": {
             "layout": [

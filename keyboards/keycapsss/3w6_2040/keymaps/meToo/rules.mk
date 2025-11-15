@@ -9,9 +9,6 @@ COMBO_ENABLE = yes
 # mouse
 MOUSEKEY_ENABLE = yes
 
-# testing
-CONSOLE_ENABLE = yes
-
 # fast booting
 BOOTMAGIC_ENABLE = yes
 

@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 <<<<<<< HEAD:users/not me/readme.md
+<<<<<<< HEAD:users/not me/readme.md
 #define AUDIO_VOICES
 #define AUDIO_PIN C6
 
@@ -24,6 +25,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 =======
 #define USE_I2C
 #define SCL_CLOCK  800000UL
+=======
+#    ifndef IOS_DEVICE_ENABLE
+#        define RGBLIGHT_VAL_STEP 16
+#        define RGBLIGHT_LIMIT_VAL 128 /* The maximum brightness level */
+#    else
+#        define RGBLIGHT_VAL_STEP 4
+#        define RGBLIGHT_LIMIT_VAL 32 /* The maximum brightness level */
+#    endif
+>>>>>>> ed343ddad4832a0a48c8ad794e949a595dcf3cfb:keyboards/manta60/config.h
 
 //#define DEBUG_MATRIX_SCAN_RATE //Use this to determine scan-rate.
 
