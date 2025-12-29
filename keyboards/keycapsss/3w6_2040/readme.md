@@ -17,6 +17,8 @@ Make firmware .uf2 for this keyboard (after setting up your build environment):
 Example of flashing this keyboard:
 
     qmk flash -kb keycapsss/3w6_2040 -km default (or drag and drop the uf2 from the above command into the mass storage device that appears when in bootloader mode)
+    -bl uf2-split-left
+    -bl uf2-split-right
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
 
