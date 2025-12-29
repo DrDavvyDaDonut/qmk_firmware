@@ -204,19 +204,19 @@ keyrecord_t record {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case SOCD_ML:
-      socdCleaner(&mouseSOCD, 0x01, record->event.pressed, KC_MS_L, KC_MS_R);
+      socdCleaner(&mouseSOCD, 0x01, record->event.pressed, MS_LEFT, MS_RGHT);
       return false;
       break;
     case SOCD_MR:
-      socdCleaner(&mouseSOCD, 0x02, record->event.pressed, KC_MS_L, KC_MS_R);
+      socdCleaner(&mouseSOCD, 0x02, record->event.pressed, MS_LEFT, MS_RGHT);
       return false;
       break;
     case SOCD_MU:
-      socdCleaner(&mouseSOCD, 0x10, record->event.pressed, KC_MS_U, KC_MS_D);
+      socdCleaner(&mouseSOCD, 0x10, record->event.pressed, MS_UP, MS_DOWN);
       return false;
       break;
     case SOCD_MD:
-      socdCleaner(&mouseSOCD, 0x20, record->event.pressed, KC_MS_U, KC_MS_D);
+      socdCleaner(&mouseSOCD, 0x20, record->event.pressed, MS_UP, MS_DOWN);
       return false;
       break;
     case HK_L:
@@ -433,9 +433,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  zeroSym,  KC_NUM    
   ),
   [_FUNC] = LAYOUT_split_3x5_3(
-    KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  KC_WH_L,  SOCD_MU,  KC_WH_R,  KC_BTN3,
-    KC_LCTL,  _______,  _______,  _______,  _______,                      KC_WH_U,  SOCD_ML,  SOCD_MD,  SOCD_MR,  KC_BTN1,
-    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      KC_WH_D,  _______,  _______,  _______,  KC_BTN2,
+    KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  MS_WHLL,  SOCD_MU,  MS_WHLR,  MS_BTN3,
+    KC_LCTL,  _______,  _______,  _______,  _______,                      MS_WHLU,  SOCD_ML,  SOCD_MD,  SOCD_MR,  MS_BTN1,
+    KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  _______,                      MS_WHLD,  _______,  _______,  _______,  MS_BTN2,
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
