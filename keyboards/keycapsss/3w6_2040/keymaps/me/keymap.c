@@ -105,7 +105,7 @@ enum keycodes {
 
 bool scrollOrMouse = false;
 
-bool suspended;
+bool suspended = false;
 
 uint8_t highest_layer = _BASE;
 
@@ -457,10 +457,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  KC_T,     KC_Y,     _______,  _______,  FISHING
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,  swpT, KC_W, KC_4,   KC_5,               KC_8,   KC_7, KC_I,   KC_O, KC_P,    
-    KC_F5,   KC_A, KC_S, KC_D,   KC_6,               KC_G,   KC_J, KC_K,   KC_L, KC_F1,    
-    KC_SPC,  KC_Z, KC_C, KC_E,   KC_Q,               KC_B,   MS_3, KC_LSFT, KC_F, KC_ESC,  
-                          KC_LSFT, KC_1, KC_2, KC_ESC, KC_F3,  BASE 
+    KC_TAB,  swpT,   KC_W, KC_4,    KC_5,               KC_8,  KC_7, KC_I,    KC_O, KC_P,    
+    KC_LCTL, KC_A,   KC_S, KC_D,    KC_6,               KC_9,  KC_J, KC_K,    KC_L, KC_M,    
+    KC_LSFT, KC_ESC, KC_C, MS_BTN3, KC_Q,               KC_B,  KC_V, KC_RSFT, KC_F, KC_G,  
+                            KC_SPC, KC_1, KC_2,   KC_0, KC_F3, BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
