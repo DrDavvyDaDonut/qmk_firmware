@@ -409,7 +409,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   NUMPADD,  backNum,  quotAlt,  entSymb,  spcSymb,  toggle 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
-    KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   KC_P,
+    KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   HK_L,
     KC_A,   HK_L, HK_D, HK_R, KC_SPC,             KC_H, KC_J,    KC_K,    KC_L,   KC_SCLN,
     KC_ESC, KC_X, KC_C, KC_V, KC_B,               KC_N, KC_SCLN, KC_SCLN, KC_SCLN, KC_SCLN,
                      NUMPADD, HK_U, ALT,  KC_ESC, KC_SPC, BASE
@@ -441,7 +441,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_GAMEPAD] = LAYOUT_split_3x5_3(
     KC_T,     swpG, UPUP, KC_B, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
     KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_F1,    
-    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
+    KC_SPC, KC_ESC, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
                           KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_TAB, BASE 
   ),
   [_FISH] = LAYOUT_split_3x5_3(
@@ -457,10 +457,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  KC_T,     KC_Y,     _______,  _______,  FISHING
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,  swpT,   KC_W, KC_4,    KC_5,               KC_8,  KC_7, KC_I,    KC_O, KC_P,    
-    KC_LCTL, KC_A,   KC_S, KC_D,    KC_6,               KC_9,  KC_J, KC_K,    KC_L, KC_M,    
-    KC_LSFT, KC_ESC, KC_C, MS_BTN3, KC_Q,               KC_B,  KC_V, KC_RSFT, KC_F, KC_G,  
-                            KC_SPC, KC_1, KC_2,   KC_0, KC_F3, BASE 
+    KC_TAB,  swpT,   KC_W, KC_4,    KC_5,               KC_8, KC_7, KC_I, KC_O,  KC_P,    
+    KC_LSFT, KC_A,   KC_S, KC_D,    KC_6,               KC_9, KC_J, KC_K, KC_F4, KC_F6,    
+    KC_RSFT, KC_ESC, KC_C, KC_LCTL, KC_Q,               KC_B, KC_V, KC_F, KC_F3, KC_G,  
+                            KC_SPC, KC_1, KC_2, KC_ESC, KC_0, BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,

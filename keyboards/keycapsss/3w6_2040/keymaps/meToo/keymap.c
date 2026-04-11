@@ -5,7 +5,7 @@
 
 #include QMK_KEYBOARD_H
 #include "g/keymap_combo.h"
-#include "socd.c"
+// #include "socd.c"
 /*
 *   LAYER NAMES
 */
@@ -17,7 +17,6 @@ enum layers {
   _NUM,
   _FUNC,
   _GAMEPAD,
-  _FISH,
   _GUITAR,
   _MINECRAFT,
   _FIGHTER,
@@ -26,7 +25,8 @@ enum layers {
 };
 
 layer_state_t red_game_layers = (layer_state_t) (1 << _GAMEPAD) | (1 << _FIGHTER);
-layer_state_t green_game_layers = (layer_state_t) (1 << _FISH) | (1 << _GUITAR) | (1 << _MINECRAFT);
+layer_state_t green_game_layers = (layer_state_t) (1 << _GUITAR) | (1 << _MINECRAFT);
+void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo);
 
 enum keycodes {
   //  socd cleaning
@@ -95,11 +95,7 @@ enum keycodes {
 #define swpG      SH_T(KC_G)
 #define swpT      SH_T(KC_3)
 #define MS_3      MS_BTN3
-#define DROP      C(KC_Q)
-
-bool scrollOrMouse = false;
-
-bool suspended;
+// #define DROP      C(KC_Q)
 
 uint8_t highest_layer = _BASE;
 
@@ -108,27 +104,14 @@ uint8_t mouseSOCD = 0;
 uint8_t gameSOCD = 0;
 
 //  on startup
-void keyboard_post_init_user(void){
-  suspended = false;
-  combo_disable();
-  swap_hands_off();
-  set_single_persistent_default_layer(_BASE);
-  //  effect both leds
-  rgblight_set_effect_range(0, 2);  
-  rgblight_reload_from_eeprom();
-}
-
-//  keyboard power down
-void suspend_power_down_user(void) {
-  suspended = true;
-  gpio_write_pin_low(GP17);
-}
-
-//  keyboard power up
-void suspend_wakeup_init_user(void) {
-  suspended = false;
-  scrollOrMouse = false;
-}
+// void keyboard_post_init_user(void){
+//   combo_disable();
+//   swap_hands_off();
+//   set_single_persistent_default_layer(_BASE);
+//   //  effect both leds
+//   rgblight_set_effect_range(0, 2);
+//   rgblight_reload_from_eeprom();
+// }
 
 //  on layer change
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -174,8 +157,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 bool led_update_user(led_t led_state) {
-  if (!suspended){
-    gpio_write_pin(GP17, !led_state.num_lock);
+
+  gpio_write_pin(GP17, !led_state.num_lock);
+
+  if (!rgblight_is_enabled()){
+    gpio_write_pin_low(GP17);
   }
   return false;
 }
@@ -336,7 +322,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   NUMPADD,  KC_BSPC,  quotAlt,  KC_ENT,   KC_SPC,   SYM 
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
-    KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   KC_P,
+    KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   HK_L,
     KC_A,   HK_L, HK_D, HK_R, KC_SPC,             KC_H, KC_J,    KC_K,    KC_L,   KC_SCLN,
     KC_ESC, KC_X, KC_C, KC_V, KC_B,               KC_N, KC_SCLN, KC_SCLN, KC_SCLN, KC_SCLN,
                      NUMPADD, HK_U, ALT,  KC_ESC, KC_SPC, BASE
@@ -368,26 +354,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_GAMEPAD] = LAYOUT_split_3x5_3(
     KC_T,     swpG, UPUP, KC_B, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
     KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_F1,    
-    KC_SPC,   KC_Z, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
+    KC_SPC, KC_ESC, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
                           KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_TAB, BASE 
   ),
-  [_FISH] = LAYOUT_split_3x5_3(
-    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
-    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
-    _______,  _______,  _______,  _______,  _______,                      _______,  _______,  _______,  _______,  _______,
-                                  _______,  _______,  _______,  _______,  _______,  BASE
-  ),
   [_GUITAR] = LAYOUT_split_3x5_3(
-    _______,  _______,  _______,  _______,  _______,                      _______,  KC_7,  KC_8,  KC_9,  _______,
-    KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         _______,  KC_4,  KC_5,  KC_6,  _______,
-    _______,  _______,  _______,  _______,  _______,                      _______,  KC_1,  KC_2,  KC_3,  _______,
-                                  _______,  KC_T,     KC_Y,     _______,  _______,  FISHING
+    KC_Q,   KC_Q, AR_U, KC_E, KC_T,               KC_Y, KC_U, KC_I,    KC_O,   KC_P,
+    KC_A,   AR_L, AR_D, AR_R, KC_F,               KC_H, KC_J, KC_K,    KC_L,   KC_SPC,
+    KC_ESC,KC_ESC,KC_C, KC_V, KC_B,               KC_N, KC_M, KC_SCLN, KC_SCLN, KC_SPC,
+                     NUMPADD, AR_U, ALT,  KC_ESC, KC_F, BASE
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,   swpT, KC_W, KC_4,   KC_5,               KC_8,   KC_7, KC_I,   KC_O, KC_P,    
-    KC_F5,    KC_A, KC_S, KC_D,   KC_6,               KC_9,   KC_J, KC_K,   KC_L, KC_F1,    
-    KC_LSFT,  KC_Z, KC_X, KC_E,   KC_Q,               DROP,   MS_3, KC_SPC, KC_1, KC_2,  
-                          KC_SPC, KC_1, KC_2, KC_ESC, KC_F3,  BASE 
+    KC_TAB,  swpT,   KC_W, KC_4,    KC_5,               KC_8, KC_7, KC_I, KC_O,  KC_P,    
+    KC_LSFT, KC_A,   KC_S, KC_D,    KC_6,               KC_9, KC_J, KC_K, KC_F4, KC_F6,    
+    KC_RSFT, KC_ESC, KC_C, KC_LCTL, KC_Q,               KC_B, KC_V, KC_F, KC_F3, KC_G,  
+                            KC_SPC, KC_1, KC_2, KC_ESC, KC_0, BASE 
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
@@ -452,3 +432,75 @@ const keypos_t PROGMEM hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}},
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 };
+
+//  simulatious opposing cardinal direction cleaning
+//  total state contains the info for two pairs of opposing cardinal directions
+//  {    high nibble   }{    low nibble    }
+//  [ 8 ][ 7 ][ 6 ][ 5 ][ 4 ][ 3 ][ 2 ][ 1 ]
+//  { start  }{ state  }{ start  }{ state  }
+//  bit is the bit being updated, will be an int with ONE bit active. Will always be in state.
+void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, uint16_t keyTwo){
+
+  //  update state with desired bits
+  if (on){
+    *totalState |= bit;
+  } else {
+    *totalState &= ~bit;
+  }
+
+  //  okay let's break this down, piece by piece
+  //  (highNibble << 2) will be 4 IFF we are dealing with the high nibble (pair two)
+  //  use the bitshift shenanigans to isolate the bits we are looking at. 
+  //  state is the current state of the pressed buttons
+  //  start is used to determin the new direction
+  //  after shifting over the bit, if it is greater than 0, then it is concerning the high nibble
+  //  ...
+  //  what a silly way to write this
+  
+  bool highNibble = bit >> 4;
+
+  uint8_t shift = highNibble << 2;
+  uint8_t state = (0x03 << shift) & *totalState;
+  uint8_t start = (0x0C << shift) & *totalState;
+
+  state >>= shift;
+  start >>= shift;
+
+  //  if they are not simultaneous
+  if (state < 3){
+    switch (state){
+      case 1:
+        register_code(keyOne);
+        unregister_code(keyTwo);
+        break;
+      case 2:
+        unregister_code(keyOne);
+        register_code(keyTwo);
+        break;
+      default:
+        unregister_code(keyOne);
+        unregister_code(keyTwo);
+        break;
+    }
+
+    *totalState &= ~(0x0C << shift);
+    *totalState |= ((state << 2) << shift);
+    return;
+  }
+
+  //  ACTUAL THINGS, BABY!!!
+  switch (start) {
+    case 4:
+      unregister_code(keyOne);
+      register_code(keyTwo);
+      break;
+    case 8:
+      register_code(keyOne);
+      unregister_code(keyTwo);
+      break;
+    default:
+      unregister_code(keyOne);
+      unregister_code(keyTwo);
+      break;
+  }
+}
