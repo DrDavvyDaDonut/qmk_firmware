@@ -259,8 +259,11 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case shftZ:
       // Immediately select the hold action when another key is pressed.
-      return true;
+      // return true;
     case shftSls:
+      // return true;
+    case swpT:
+    case swpG:
       return true;
     default:
       // Do not select the hold action when another key is pressed.
