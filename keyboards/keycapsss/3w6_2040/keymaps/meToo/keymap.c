@@ -327,7 +327,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_HOLLOW] = LAYOUT_split_3x5_3(
     KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   HK_L,
     KC_A,   HK_L, HK_D, HK_R, KC_SPC,             KC_H, KC_J,    KC_K,    KC_L,   KC_SCLN,
-    KC_ESC, KC_X, KC_C, KC_V, KC_B,               KC_N, KC_SCLN, KC_SCLN, KC_SCLN, KC_SCLN,
+    KC_Z, KC_ESC, KC_C, KC_V, KC_B,               KC_N, KC_SCLN, KC_SCLN, KC_SCLN, KC_SCLN,
                      NUMPADD, HK_U, ALT,  KC_ESC, KC_SPC, BASE
   ),
   [_ALTER] = LAYOUT_split_3x5_3(
@@ -394,6 +394,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 //  enter the row and column, recieve new (column, row)
+//  because of the way split keyboards are in memory, they are
+//  stacked on top of one another. 
 /*
 {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0},                 {4, 4}, {3, 4}, {2, 4}, {1, 4}, {0, 4},
 {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1},                 {4, 5}, {3, 5}, {2, 5}, {1, 5}, {0, 5},
