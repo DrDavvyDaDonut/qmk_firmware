@@ -264,14 +264,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_UP, KC_DOWN);
       return false;
       break;
-    case MC_TAB:
-      if (record->tap.count == 0) {           // On hold.
-        mcHotOrNot = !(record->event.pressed);
-        return false;  // Skip default handling.
-      }
-      // On tap, continue default handling to act as KC_TAB.
-      return true;
-      break;
+    // case MC_TAB:
+    //   if (record->tap.count == 0) {           // On hold.
+    //     mcHotOrNot = !(record->event.pressed);
+    //     return false;  // Skip default handling.
+    //   }
+    //   // On tap, continue default handling to act as KC_TAB.
+    //   return true;
+    //   break;
     // case MCC1:
     //   if (record->event.pressed) {          // On press.
     //     register_code(KC_1 + mcHotOrNot * MC_OFFSET);
