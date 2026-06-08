@@ -53,6 +53,17 @@ enum keycodes {
   AR_L,
   AR_R,
   AR_U,
+
+  //  minecraft
+  MCC1,
+  MCC2,
+  MCC3,
+  MCC4,
+  MCC5,
+  MCC6,
+  MCC7,
+  MCC8,
+  MCC9,
 };
 
 //  layer controls
@@ -93,9 +104,12 @@ enum keycodes {
 
 //  gamer keys
 #define swpG      SH_T(KC_G)
-#define swpT      SH_T(KC_3)
-#define MS_3      MS_BTN3
+#define swap      SH_MON
 // #define DROP      C(KC_Q)
+
+//  minecraft keys
+#define MC_TAB      LT(0, KC_TAB)
+bool mcHotOrNot = true;
 
 uint8_t highest_layer = _BASE;
 
@@ -120,7 +134,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   highest_layer = get_highest_layer(state);
 
   if (highest_layer == _ALTER){
-    register_mods(MOD_LALT);  
+    register_mods(MOD_LALT);
   } else {
     unregister_mods(MOD_LALT);
   }
@@ -134,12 +148,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
   if (layer_state_cmp(state, _HOLLOW)){
     rgblight_sethsv(149, 57, 217);
   } else
-  if (state & red_game_layers){       //  red gaming layers 
+  if (state & red_game_layers){       //  red gaming layers
     rgblight_sethsv(0, 210, 176);
   } else
   if (state & ((layer_state_t) 1 << _POKEONE)){
     rgblight_sethsv(15, 230, 195);
-  } else 
+  } else
   if (state & ((layer_state_t) 1 << _POKETWO)){
     rgblight_sethsv(32, 246, 143);
   } else
@@ -247,6 +261,86 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       socdCleaner(&gameSOCD, 0x20, record->event.pressed, KC_UP, KC_DOWN);
       return false;
       break;
+    case MC_TAB:
+      if (record->tap.count == 0) {           // On hold.
+        mcHotOrNot = !(record->event.pressed);
+        return false;  // Skip default handling.
+      }
+      // On tap, continue default handling to act as KC_TAB.
+      return true;
+      break;
+    case MCC1:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_1 + mcHotOrNot * 59);     // 59 is offset between number keys and numberpad.
+      } else {                              // On release.
+        unregister_code(KC_1 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC2:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_2 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_2 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC3:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_3 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_3 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC4:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_4 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_4 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC5:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_5 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_5 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC6:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_6 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_6 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC7:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_7 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_7 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC8:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_8 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_8 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
+    case MCC9:
+      if (record->event.pressed) {          // On press.
+        register_code(KC_9 + mcHotOrNot * 59);
+      } else {                              // On release.
+        unregister_code(KC_9 + mcHotOrNot * 59);
+      }
+      return false;  // Skip default handling.
+      break;
     default:
       return true;
       break;
@@ -262,7 +356,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
       // return true;
     case shftSls:
       // return true;
-    case swpT:
+    case swap:
     case swpG:
       return true;
     default:
@@ -301,7 +395,7 @@ const key_override_t *key_overrides[] = {
 };
 
 /*
-*   LAYER 
+*   LAYER
 */
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -322,7 +416,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                         KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,
     ctrlA,    KC_S,     KC_D,     KC_F,     KC_G,                         KC_H,     KC_J,     KC_K,     KC_L,     ctlSemi,
     shftZ,    KC_X,     lGuiC,    lAltV,    KC_B,                         KC_N,     rAltM,    guiComm,  KC_DOT,   shftSls,
-                                  NUMPADD,  KC_BSPC,  quotAlt,  KC_ENT,   KC_SPC,   SYM 
+                                  NUMPADD,  KC_BSPC,  quotAlt,  KC_ENT,   KC_SPC,   SYM
   ),
   [_HOLLOW] = LAYOUT_split_3x5_3(
     KC_Q,   KC_W, HK_U, KC_R, KC_T,               KC_Y, KC_U,    KC_I,    KC_O,   HK_L,
@@ -346,7 +440,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,   winLeft,  KC_UP,    winRght,  KC_QUOT,                      KC_CIRC,  KC_P7,    KC_P8,    KC_P9,    KC_PMNS,
     KC_LCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT,  KC_DOT,                       KC_LPRN,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,
     KC_LSFT,  KC_ESC,   KC_LGUI,  KC_LALT,  KC_COMM,                      KC_RPRN,  KC_P1,    KC_P2,    KC_P3,    KC_PDOT,
-                                  _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  KC_P0,  nmLkSym    
+                                  _______,  KC_MPLY,  KC_MPLY,  KC_PENT,  KC_P0,  nmLkSym
   ),
   [_FUNC] = LAYOUT_split_3x5_3(
     KC_F1,    KC_F2,    KC_F4,    KC_F8,    KC_F16,                       _______,  MS_WHLL,  SOCD_MU,  MS_WHLR,  MS_BTN3,
@@ -355,10 +449,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______,  _______,  _______,  _______,  _______,  _______
   ),
   [_GAMEPAD] = LAYOUT_split_3x5_3(
-    KC_T,     swpG, UPUP, KC_B, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,    
-    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_F1,    
-    KC_SPC, KC_ESC, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,  
-                          KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_TAB, BASE 
+    KC_T,     swpG, UPUP, KC_B, KC_R,                   KC_Y, KC_U, KC_I, KC_O, KC_P,
+    KC_LCTL,  LEFT, DOWN, RGHT, KC_F,                   KC_H, KC_J, KC_K, KC_L, KC_F1,
+    KC_SPC, KC_ESC, KC_X, KC_C, KC_V,                   KC_N, KC_M, KC_1, KC_2, KC_3,
+                          KC_Q, KC_LSFT,  KC_E, KC_ESC, KC_TAB, BASE
   ),
   [_GUITAR] = LAYOUT_split_3x5_3(
     KC_Q,   KC_Q, AR_U, KC_E, KC_T,               KC_Y, KC_U, KC_I,    KC_O,   KC_P,
@@ -367,10 +461,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                      NUMPADD, AR_U, ALT,  KC_ESC, KC_F, BASE
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,  swpT,   KC_W, KC_4,    KC_5,               KC_8, KC_7, KC_I, KC_O,  KC_P,    
-    KC_LSFT, KC_A,   KC_S, KC_D,    KC_6,               KC_9, KC_J, KC_K, KC_F4, KC_F6,    
-    KC_RSFT, KC_ESC, KC_C, KC_LCTL, KC_Q,               KC_B, KC_V, KC_F, KC_F3, KC_G,  
-                            KC_SPC, KC_1, KC_2, KC_ESC, KC_0, BASE 
+    MC_TAB,  swap,   KC_W, MCC4,    MCC5,               MCC8, MCC7, KC_I, KC_O,  KC_P,
+    KC_LSFT, KC_A,   KC_S, KC_D,    MCC6,               MCC9, KC_J, KC_K, KC_F4, KC_F6,
+    KC_RSFT, KC_ESC, KC_C, KC_LCTL, MCC3,               KC_B, KC_V, KC_F, KC_F3, KC_G,
+                            KC_SPC, MCC1, MCC2, KC_ESC, KC_0, BASE
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
@@ -395,7 +489,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 //  enter the row and column, recieve new (column, row)
 //  because of the way split keyboards are in memory, they are
-//  stacked on top of one another. 
+//  stacked on top of one another.
 /*
 {0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0},                 {4, 4}, {3, 4}, {2, 4}, {1, 4}, {0, 4},
 {0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1},                 {4, 5}, {3, 5}, {2, 5}, {1, 5}, {0, 5},
@@ -415,7 +509,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   {{0, 7}, {1, 7}, {2, 7}, {3, 7}, {4, 7}},
 */
 
-//  pure swap  
+//  pure swap
 /*
   {{0, 4}, {1, 4}, {2, 4}, {3, 4}, {4, 4}},
   {{0, 5}, {1, 5}, {2, 5}, {3, 5}, {4, 5}},
@@ -455,13 +549,13 @@ void socdCleaner(uint8_t * totalState, uint8_t bit, bool on, uint16_t keyOne, ui
 
   //  okay let's break this down, piece by piece
   //  (highNibble << 2) will be 4 IFF we are dealing with the high nibble (pair two)
-  //  use the bitshift shenanigans to isolate the bits we are looking at. 
+  //  use the bitshift shenanigans to isolate the bits we are looking at.
   //  state is the current state of the pressed buttons
   //  start is used to determin the new direction
   //  after shifting over the bit, if it is greater than 0, then it is concerning the high nibble
   //  ...
   //  what a silly way to write this
-  
+
   bool highNibble = bit >> 4;
 
   uint8_t shift = highNibble << 2;
