@@ -464,9 +464,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                      NUMPADD, AR_U, ALT,  KC_ESC, KC_F, BASE
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    KC_TAB,  swap,   KC_W, KC_3,    KC_4,               KC_8, KC_7, KC_I, KC_O,  KC_P,
-    KC_LSFT, KC_A,   KC_S, KC_D,    KC_5,               KC_9, KC_J, KC_K, KC_F4, KC_F6,
-    KC_RSFT, KC_ESC, KC_C, KC_LCTL, KC_6,               KC_B, KC_V, KC_F, KC_F3, KC_G,
+    KC_TAB,  swap,   KC_W, KC_4,    KC_5,               KC_8, KC_7, KC_I, KC_O,  KC_P,
+    KC_LSFT, KC_A,   KC_S, KC_D,    KC_6,               KC_9, KC_J, KC_K, KC_F4, KC_F6,
+    KC_RSFT, KC_ESC, KC_C, KC_LCTL, KC_3,               KC_B, KC_V, KC_F, KC_F3, KC_G,
                             KC_SPC, KC_1, KC_2, KC_ESC, KC_0, BASE
     // MC_TAB,  swap,   KC_W, MCC4,    MCC5,               MCC8, MCC7, KC_I, KC_O,  KC_P,
     // KC_LSFT, KC_A,   KC_S, KC_D,    MCC6,               MCC9, KC_J, KC_K, KC_F4, KC_F6,
