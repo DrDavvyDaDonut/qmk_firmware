@@ -58,16 +58,15 @@ enum keycodes {
   AR_U,
 
   //  minecraft
-  MCPI
-  MCC1,
-  MCC2,
-  MCC3,
-  MCC4,
-  MCC5,
-  MCC6,
-  MCC7,
-  MCC8,
-  MCC9,
+//   MCC1,
+//   MCC2,
+//   MCC3,
+//   MCC4,
+//   MCC5,
+//   MCC6,
+//   MCC7,
+//   MCC8,
+//   MCC9,
 };
 
 //  layer controls
@@ -113,7 +112,7 @@ enum keycodes {
 
 //  minecraft keys
 // #define MC_TAB      LT(0, KC_TAB)
-bool mcHotOrNot = true;
+// bool mcHotOrNot = true;
 
 uint8_t highest_layer = _BASE;
 
@@ -273,80 +272,78 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     //   // On tap, continue default handling to act as KC_TAB.
     //   return true;
     //   break;
-    case MCPI:
-      mcHotOrNot = record->event.pressed;
-    case MCC1:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_1 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_1 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC2:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_2 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_2 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC3:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_3 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_3 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC4:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_4 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_4 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC5:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_5 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_5 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC6:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_6 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_6 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC7:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_7 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_7 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC8:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_8 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_8 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
-    case MCC9:
-      if (record->event.pressed) {          // On press.
-        register_code(KC_9 + mcHotOrNot * MC_OFFSET);
-      } else {                              // On release.
-        unregister_code(KC_9 + mcHotOrNot * MC_OFFSET);
-      }
-      return false;  // Skip default handling.
-      break;
+    // case MCC1:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_1 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_1 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC2:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_2 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_2 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC3:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_3 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_3 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC4:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_4 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_4 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC5:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_5 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_5 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC6:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_6 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_6 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC7:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_7 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_7 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC8:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_8 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_8 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
+    // case MCC9:
+    //   if (record->event.pressed) {          // On press.
+    //     register_code(KC_9 + mcHotOrNot * MC_OFFSET);
+    //   } else {                              // On release.
+    //     unregister_code(KC_9 + mcHotOrNot * MC_OFFSET);
+    //   }
+    //   return false;  // Skip default handling.
+    //   break;
     default:
       return true;
       break;
@@ -467,14 +464,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                      NUMPADD, AR_U, ALT,  KC_ESC, KC_F, BASE
   ),
   [_MINECRAFT] = LAYOUT_split_3x5_3(
-    // KC_TAB,  swap,   KC_W, KC_4,    KC_5,               KC_8, KC_7, KC_I, KC_O,  KC_P,
-    // KC_LSFT, KC_A,   KC_S, KC_D,    KC_6,               KC_9, KC_J, KC_K, KC_F4, KC_F6,
-    // KC_RSFT, KC_ESC, KC_C, KC_LCTL, KC_3,               KC_B, KC_V, KC_F, KC_F3, KC_G,
-    //                         KC_SPC, KC_1, KC_2, KC_ESC, KC_0, BASE
-    KC_TAB,  swap,   KC_W, MCC4,    MCC5,               MCC8, MCC7, KC_I, KC_O,  KC_P,
-    KC_LSFT, KC_A,   KC_S, KC_D,    MCC6,               MCC9, KC_J, KC_K, KC_F4, KC_F6,
-    KC_RSFT, KC_ESC, KC_C, KC_LCTL, MCC3,               KC_B, KC_V, KC_F, KC_F3, KC_G,
-                            KC_SPC, MCC1, MCC2, KC_ESC, MCPI, BASE
+    KC_TAB,  swap,   KC_W, KC_4,    KC_5,               KC_8, KC_7, KC_I, KC_O,  KC_P,
+    KC_LSFT, KC_A,   KC_S, KC_D,    KC_6,               KC_9, KC_J, KC_K, KC_F4, KC_F6,
+    KC_RSFT, KC_ESC, KC_C, KC_LCTL, KC_3,               KC_B, KC_V, KC_F, KC_F3, KC_G,
+                            KC_SPC, KC_1, KC_2, KC_ESC, KC_0, BASE
+    // MC_TAB,  swap,   KC_W, MCC4,    MCC5,               MCC8, MCC7, KC_I, KC_O,  KC_P,
+    // KC_LSFT, KC_A,   KC_S, KC_D,    MCC6,               MCC9, KC_J, KC_K, KC_F4, KC_F6,
+    // KC_RSFT, KC_ESC, KC_C, KC_LCTL, MCC3,               KC_B, KC_V, KC_F, KC_F3, KC_G,
+    //                         KC_SPC, MCC1, MCC2, KC_ESC, KC_0, BASE
   ),
   [_FIGHTER] = LAYOUT_split_3x5_3(
     KC_TAB,   KC_Q,     AR_U,     KC_E,     _______,                      _______,  _______,  KC_B,     KC_X,     _______,
